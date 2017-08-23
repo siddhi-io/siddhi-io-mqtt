@@ -44,43 +44,53 @@ import java.util.Map;
 @Extension(
         name = "mqtt",
         namespace = "source",
-        description = "The mqtt source receives the events from a mqtt broker ",
+        description = "The MQTT source receives the events from an MQTT broker ",
         parameters = {
                 @Parameter(
                         name = "url",
-                        description = "MQTT broker url,It is used to connect to the MQTT broker " +
-                                "This is a mandatory parameter.",
+                        description = "The URL of the MQTT broker. It is used to connect to the MQTT broker. It is" +
+                                " required to specify a valid URL here.",
                         type = {DataType.STRING}),
                 @Parameter(
                         name = "username",
-                        description = "Username of the mqtt broker ",
+                        description = "The username to be provided when the MQTT client is authenticated by the " +
+                                "broker.",
                         type = {DataType.STRING},
                         optional = true,
                         defaultValue = "null"),
                 @Parameter(
                         name = "password",
-                        description = "password of the mqtt broker ",
+                        description = "The password to be provided when the MQTT client is authenticated by the " +
+                                "broker.",
                         type = {DataType.STRING},
                         optional = true,
                         defaultValue = "empty"),
                 @Parameter(
                         name = "client.id",
-                        description = "client identifier is used by the server to identify a client, " +
-                                " If user has not given the client.id then the client.id need to be " +
-                                "generated",
+                        description = "A unique ID for the MQTT client. The server uses this to identify the client " +
+                                "when it reconnects. If you do not specify a client ID, the system automatically " +
+                                "generates it.",
                         type = {DataType.STRING}),
                 @Parameter(
                         name = "topic",
-                        description = "Messages in MQTT are published on topics" +
+                        description = "The topic from which WSO2 SP receives events via MQTT. Multiple topics can " +
+                                "be specified as a list of comma separated values." +
                                 "This is a mandatory parameter.",
                         type = {DataType.STRING}),
                 @Parameter(
                         name = "quality.of.service",
-                        description = "QoS defines how hard the broker/client will try to ensure that a " +
-                                "message is received. It can takes the value as 0 or 1 or 2." +
-                                "value 0 guarantees that the message will be delivered at most once" +
-                                "value 1 guarantees that the message will be delivered at least once" +
-                                "value 2 guarantees that the message will be delivered only once.",
+                        description = "The quality of service provided by the MQTT client. The possible values are " +
+                                "as follows." +
+                                "`0`: The MQTT client sends each event to WSO2 SP only once. It does not receive " +
+                                "an acknowledgement when an event is delivered, and the events are not stored." +
+                                "Events may get lost if the MQTT client is disconnected or if the server fails." +
+                                "This is the fastest method in which events are received via MQTT." +
+                                "`1`: The MQTT client sends each event to WSO2 SP at least once. If the MQTT client " +
+                                "does not receive an acknowledgement to indicate that the event is delivered, it " +
+                                "sends the event again." +
+                                "`2`: The MQTT client sends each event to WSO2 SP only once. The events are stored " +
+                                "until the WSO2 SP receives them. This is the safest, but the slowest method of " +
+                                "receiving events via MQTT.",
                         type = {DataType.STRING},
                         optional = true,
                         defaultValue = "1"),
@@ -89,7 +99,10 @@ import java.util.Map;
                         description = "clean session flag indicates the broker, whether the client wants " +
                                 "to establish a persistent session or not,if clean session is set to false," +
                                 " then the connection is treated as durable.If clean session is true, then " +
-                                "all subscriptions will be removed for the client when it disconnects.",
+                                "all subscriptions will be removed for the client when it disconnects." +
+                                "If the value provided in the MQTT source configuration is different to the values " +
+                        "specified above, an error is logged when the Siddhi Application that contains the " +
+                        "configuration is deployed.",
                         type = {DataType.BOOL},
                         optional = true,
                         defaultValue = "true"
@@ -97,26 +110,31 @@ import java.util.Map;
                 @Parameter(
                         name = "keep.alive",
                         description = "The maximum number of seconds the connection between the MQTT client and " +
-                                "the broker",
+                                "the broker should be maintained without any events being transferred. Once this " +
+                                "time interval elapses without any event transfers, the connection is dropped. The " +
+                                "default value is 60.",
                         type = {DataType.INT},
                         optional = true,
                         defaultValue = "60"),
                 @Parameter(
                         name = "connection.timeout",
-                        description = "The maximum number of seconds that the MQTT client should spend attempting" +
-                                " to connect to the MQTT broker",
+                        description = "The maximum number of seconds that the MQTT client should spend attempting " +
+                                "to connect to the MQTT broker. Once this time interval elapses, a timeout takes " +
+                                "place.",
                         type = {DataType.INT},
                         optional = true,
                         defaultValue = "30")
         },
         examples =
                 {
-                        @Example(description = "Following example illustrates how to consuming events from MQTT topic.",
+                        @Example(
                                 syntax = "@source(type='mqtt', url= 'tcp://localhost:1883', " +
-                                        "topic='mqtt_topic', clean.session='true', " +
+                                        "topic='mqtt_topic', clean.session='true'," +
                                         "quality.of.service= '1', keep.alive= '60',connection.timeout='30'" +
                                         "@map(type='xml'))" +
-                                        "Define stream BarStream (symbol string, price float, volume long);")
+                                        "Define stream BarStream (symbol string, price float, volume long);",
+                                description = "This query receives events from the `mqtt_topic` topic via MQTT," +
+                                "and processes them to the BarStream stream.")
                 }
 )
 
