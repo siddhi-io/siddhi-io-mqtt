@@ -50,9 +50,9 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## How to Contribute
  
-   * Please report issues at <a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-unique/issues">GitHub Issue Tracker</a>.
+   * Please report issues at <a target="_blank" href="https://github.com/wso2-extensions/siddhi-io-mqtt/issues">GitHub Issue Tracker</a>.
 
-   * Send your contributions as pull requests to <a target="_blank" href="https://github.com/wso2-extensions/siddhi-execution-unique/tree/master">master branch</a>
+   * Send your contributions as pull requests to <a target="_blank" href="https://github.com/wso2-extensions/siddhi-io-mqtt/tree/master">master branch</a>
  
 ## Contact us 
 
