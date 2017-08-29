@@ -99,14 +99,13 @@ import java.util.Map;
                         optional = true, defaultValue = "1"),
                 @Parameter(
                         name = "clean.session",
-                        description = "This is an optional parameter. If this parameter is set to `true`, all the " +
-                                "information relating to the MQTT client's connection to the broker (e.g., the " +
-                                "specific topics to which the client has subscribed) are saved after a session. " +
-                                "Thus, when a session ends and restarts, the connection is reestablished with " +
-                                "the same information.\n" +
-                                "If this parameter is set to `false`, the subscriptions made by the MQTT client " +
-                                "during a session expire when the session ends, and they need to be recreated for " +
-                                "the next session.\n" +
+                        description = "This is an optional paramater. If this parameter is set to `true`, the " +
+                                "subscriptions made by the MQTT client during a session expire when the session ends," +
+                                "and they need to be recreated for the next session.\n" +
+                                "If this parameter is set to `false`, all the information relating to the MQTT " +
+                                "client's connection to the broker (e.g., the specific topics to which the client " +
+                                "has subscribed) are saved after a session. Thus, when a session ends and restarts," +
+                                " the connection is re-established with the same information.\n" +
                                 "The default value is `true`.",
                         type = {DataType.BOOL},
                         optional = true, defaultValue = "true"
