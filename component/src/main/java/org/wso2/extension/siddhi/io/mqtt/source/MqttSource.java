@@ -96,10 +96,10 @@ import java.util.Map;
                         defaultValue = "1"),
                 @Parameter(
                         name = "clean.session",
-                        description = "clean session flag indicates the broker, whether the client wants " +
-                                "to establish a persistent session or not, if this parameter is set to `false`," +
-                                "then the connection is treated as durable. If this parameter is set to `true`, then " +
-                                "all the subscriptions are removed for the client when it disconnects." +
+                        description = "This parameter indicates whether the client needs to establish a persistent" +
+                                " session or not, if this parameter is set to `false`, then the connection is " +
+                                "treated as durable. If this parameter is set to `true`, then all the subscriptions" +
+                                " are removed for the client when it disconnects." +
                                 "If the value provided in the MQTT source configuration is different to the values " +
                                 "specified above, an error is logged when the Siddhi Application that contains the " +
                                 "configuration is deployed.",
