@@ -76,7 +76,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <siddhi.version>4.0.0-M33</siddhi.version>
+        <siddhi.version>4.0.0-M52</siddhi.version>
         <mqtt.version>1.1.1</mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <siddhi.map.binary.version>1.0.0</siddhi.map.binary.version>
@@ -101,6 +101,18 @@
                     <preparationGoals>clean install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-doc-gen</artifactId>
+                <version>${siddhi.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-md-docs</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
