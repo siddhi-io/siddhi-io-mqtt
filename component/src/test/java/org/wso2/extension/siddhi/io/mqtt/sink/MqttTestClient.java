@@ -30,18 +30,18 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 
 public class MqttTestClient {
-    private  static final Logger log = Logger.getLogger(MqttTestClient.class);
-    private  MemoryPersistence persistence;
-    private  MqttClient client = null;
-    private  MqttConnectOptions connectionOptions = null;
-    private  String clientId;
-    private  String userName = null;
-    private  String userPassword = "";
-    private  boolean cleanSession = true;
-    private  boolean eventArrived;
-    private  int count;
-    private  int keepAlive = 60;
-    private  int connectionTimeout = 30;
+    private static final Logger log = Logger.getLogger(MqttTestClient.class);
+    private MemoryPersistence persistence;
+    private MqttClient client = null;
+    private MqttConnectOptions connectionOptions = null;
+    private String clientId;
+    private String userName = null;
+    private String userPassword = "";
+    private boolean cleanSession = true;
+    private boolean eventArrived;
+    private int count;
+    private int keepAlive = 60;
+    private int connectionTimeout = 30;
     private MqttReceiverCallBack mqttReceiverCallBack;
 
     public class MqttReceiverCallBack implements MqttCallback {
@@ -69,7 +69,7 @@ public class MqttTestClient {
     }
 
 
-    public  MqttTestClient(String brokerURL, String topic, int qos) throws ConnectionUnavailableException {
+    public MqttTestClient(String brokerURL, String topic, int qos) throws ConnectionUnavailableException {
         try {
             persistence = new MemoryPersistence();
             clientId = MqttClient.generateClientId();
