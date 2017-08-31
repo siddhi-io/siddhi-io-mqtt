@@ -51,6 +51,7 @@ public class MqttSourceMapTest {
         count = 0;
         eventArrived = false;
     }
+
     @BeforeClass
     public static void init() throws Exception {
         try {
@@ -64,10 +65,12 @@ public class MqttSourceMapTest {
             throw new RemoteException("Exception caught when starting server", e);
         }
     }
+
     @AfterClass
     public static void stop() {
         mqttBroker.stopServer();
     }
+
     @Test
     public void mqttRecieveWithJSONMapping() throws InterruptedException, IOException, ConnectionUnavailableException {
         LOG.info("test for recieve events with XML Mapping");
@@ -114,6 +117,7 @@ public class MqttSourceMapTest {
         siddhiAppRuntime.shutdown();
 
     }
+
     @Test
     public void mqttRecieveWithXmlMapping() throws InterruptedException, IOException, ConnectionUnavailableException {
         LOG.info("test for recieve events with XML Mapping");

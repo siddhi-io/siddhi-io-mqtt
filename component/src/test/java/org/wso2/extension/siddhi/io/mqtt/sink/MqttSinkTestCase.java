@@ -33,6 +33,7 @@ import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -50,6 +51,7 @@ public class MqttSinkTestCase {
         count = 0;
         eventArrived = false;
     }
+
     @BeforeClass
     public static void init() throws Exception {
         try {
@@ -63,6 +65,7 @@ public class MqttSinkTestCase {
             throw new RemoteException("Exception caught when starting server", e);
         }
     }
+
     @AfterClass
     public static void stop() {
         mqttBroker.stopServer();
@@ -105,6 +108,8 @@ public class MqttSinkTestCase {
 
 
     }
+
+    @Test
     public void mqttPublishMultipleEvents() throws InterruptedException, ConnectionUnavailableException {
         log.info("Mqtt Publish test for multiple events");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -138,6 +143,7 @@ public class MqttSinkTestCase {
 
 
     }
+
     @Test
     public void mqttPublishWithoutUrlTest() throws InterruptedException, ConnectionUnavailableException {
         try {
@@ -175,6 +181,7 @@ public class MqttSinkTestCase {
         }
 
     }
+
     @Test
     public void mqttPublishWithInvalidBrokerCredintials() throws InterruptedException, ConnectionUnavailableException {
         log.info("test for publish events with invalid broker credintials");
@@ -249,6 +256,7 @@ public class MqttSinkTestCase {
             log.warn("Mqtt topic is not provided ");
         }
     }
+
     @Test
     public void mqttPublishWithoutCleanSession() throws InterruptedException, ConnectionUnavailableException {
         log.info("Mqtt Publish test for without clean session");
@@ -283,6 +291,7 @@ public class MqttSinkTestCase {
 
 
     }
+
     @Test
     public void mqttPublishWithoutKeepAlive() throws InterruptedException, ConnectionUnavailableException {
         log.info("Mqtt Publish test for without keep alive");
@@ -318,6 +327,7 @@ public class MqttSinkTestCase {
 
 
     }
+
     @Test
     public void mqttPublishWithCleanSessionFalse() throws InterruptedException, ConnectionUnavailableException {
         log.info("Mqtt Publish test for with clean session false");

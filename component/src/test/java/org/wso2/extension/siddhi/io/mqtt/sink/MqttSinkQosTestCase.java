@@ -38,7 +38,7 @@ public class MqttSinkQosTestCase {
     private volatile int count;
     private volatile boolean eventArrived;
     private static final Logger log = Logger.getLogger(MqttSinkQosTestCase.class);
-    private static final  Server mqttBroker = new Server();
+    private static final Server mqttBroker = new Server();
     private MqttTestClient mqttTestClient;
 
     @BeforeMethod
@@ -46,6 +46,7 @@ public class MqttSinkQosTestCase {
         count = 0;
         eventArrived = false;
     }
+
     @BeforeClass
     public static void init() throws Exception {
         try {
@@ -59,10 +60,12 @@ public class MqttSinkQosTestCase {
             throw new RemoteException("Exception caught when starting server", e);
         }
     }
+
     @AfterClass
     public static void stop() {
         mqttBroker.stopServer();
     }
+
     @Test
     public void mqttPublishEventsWithInvalidQos() throws Exception {
         try {
