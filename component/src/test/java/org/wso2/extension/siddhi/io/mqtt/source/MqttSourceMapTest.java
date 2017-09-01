@@ -33,22 +33,26 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.util.SiddhiTestHelper;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MqttSourceMapTest {
     static final Logger LOG = Logger.getLogger(MqttSourceMapTest.class);
-    private volatile int count;
+    private AtomicInteger count = new AtomicInteger(0);
+    private int waitTime = 50;
+    private int timeout = 30000;
     private volatile boolean eventArrived;
     private static final Server mqttBroker = new Server();
 
 
     @BeforeMethod
     public void initBeforeMethod() {
-        count = 0;
+        count.set(0);
         eventArrived = false;
     }
 
@@ -73,7 +77,7 @@ public class MqttSourceMapTest {
 
     @Test
     public void mqttRecieveWithJSONMapping() throws InterruptedException, IOException, ConnectionUnavailableException {
-        LOG.info("test for recieve events with XML Mapping");
+        LOG.info("test for recieve events with JSON Mapping");
 
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
@@ -90,7 +94,7 @@ public class MqttSourceMapTest {
                 for (Event event : events) {
                     LOG.info(event);
                     eventArrived = true;
-                    count++;
+                    count.incrementAndGet();
                 }
             }
         });
@@ -112,8 +116,9 @@ public class MqttSourceMapTest {
         fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
         fooStream.send(new Object[]{"IBM", 75.6f, 100L});
         fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-        Thread.sleep(10000);
-        AssertJUnit.assertEquals(3, count);
+        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        AssertJUnit.assertEquals(3, count.get());
+        siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
 
     }
@@ -137,7 +142,7 @@ public class MqttSourceMapTest {
                 for (Event event : events) {
                     LOG.info(event);
                     eventArrived = true;
-                    count++;
+                    count.incrementAndGet();
                 }
             }
         });
@@ -159,8 +164,9 @@ public class MqttSourceMapTest {
         fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
         fooStream.send(new Object[]{"IBM", 75.6f, 100L});
         fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-        Thread.sleep(10000);
-        AssertJUnit.assertEquals(3, count);
+        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        AssertJUnit.assertEquals(3, count.get());
+        siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
 
     }
