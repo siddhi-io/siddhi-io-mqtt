@@ -30,12 +30,11 @@ import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.SiddhiTestHelper;
 
-import java.io.IOException;
+
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,18 +42,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MqttSourceMapTest {
     static final Logger LOG = Logger.getLogger(MqttSourceMapTest.class);
+    private static final Server mqttBroker = new Server();
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
     private int timeout = 30000;
     private volatile boolean eventArrived;
-    private static final Server mqttBroker = new Server();
-
-
-    @BeforeMethod
-    public void initBeforeMethod() {
-        count.set(0);
-        eventArrived = false;
-    }
 
     @BeforeClass
     public static void init() throws Exception {
@@ -75,10 +67,15 @@ public class MqttSourceMapTest {
         mqttBroker.stopServer();
     }
 
-    @Test
-    public void mqttRecieveWithJSONMapping() throws InterruptedException, IOException, ConnectionUnavailableException {
-        LOG.info("test for recieve events with JSON Mapping");
+    @BeforeMethod
+    public void initBeforeMethod() {
+        count.set(0);
+        eventArrived = false;
+    }
 
+    @Test
+    public void mqttRecieveWithJSONMapping() {
+        LOG.info("test for recieve events with JSON Mapping");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -99,7 +96,11 @@ public class MqttSourceMapTest {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -112,11 +113,14 @@ public class MqttSourceMapTest {
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
-
+    try {
         fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
         fooStream.send(new Object[]{"IBM", 75.6f, 100L});
         fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
         SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+    } catch (InterruptedException e) {
+        AssertJUnit.fail("Thread sleep was interrupted");
+    }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
@@ -124,7 +128,7 @@ public class MqttSourceMapTest {
     }
 
     @Test
-    public void mqttRecieveWithXmlMapping() throws InterruptedException, IOException, ConnectionUnavailableException {
+    public void mqttRecieveWithXmlMapping() {
         LOG.info("test for recieve events with XML Mapping");
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -147,7 +151,11 @@ public class MqttSourceMapTest {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -160,11 +168,14 @@ public class MqttSourceMapTest {
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
-
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();

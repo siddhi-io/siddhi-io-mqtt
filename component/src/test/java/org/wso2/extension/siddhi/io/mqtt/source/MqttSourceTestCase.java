@@ -30,12 +30,12 @@ import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.SiddhiTestHelper;
+import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
-import java.io.IOException;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -77,9 +77,8 @@ public class MqttSourceTestCase {
     }
 
     @Test
-    public void mqttReceiveSingleEvents() throws InterruptedException, IOException, ConnectionUnavailableException {
+    public void mqttReceiveSingleEvents() {
         LOG.info("Test for receive single events");
-
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -100,7 +99,11 @@ public class MqttSourceTestCase {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -113,21 +116,22 @@ public class MqttSourceTestCase {
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
-
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
-        AssertJUnit.assertEquals(3, count.get());
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
 
     }
 
     @Test
-    public void mqttReceiveMultipleEvents() throws InterruptedException, IOException, ConnectionUnavailableException {
+    public void mqttReceiveMultipleEvents() {
         LOG.info("test for receive muliple events");
-
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -148,7 +152,11 @@ public class MqttSourceTestCase {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -166,8 +174,12 @@ public class MqttSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-        fooStream.send(arrayList.toArray(new Event[3]));
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        try {
+            fooStream.send(arrayList.toArray(new Event[3]));
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
@@ -175,10 +187,9 @@ public class MqttSourceTestCase {
     }
 
 
-    @Test
-    public void testMqttWithoutUrl() throws InterruptedException, IOException, ConnectionUnavailableException {
+    @Test(expectedExceptions = {SiddhiAppValidationException.class})
+    public void testMqttWithoutUrl() {
         LOG.info("test for receive events without url");
-        try {
             SiddhiManager siddhiManager = new SiddhiManager();
             SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                     "@App:name('TestExecutionPlan2') " +
@@ -188,55 +199,19 @@ public class MqttSourceTestCase {
                             " keep.alive= '60', @map(type='xml'))" +
                             "Define stream FooStream2 (symbol string, price float, volume long);" +
                             "from FooStream2 select symbol, price, volume insert into BarStream2;");
-            siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
-                @Override
-                public void receive(Event[] events) {
-                    for (Event event : events) {
-                        LOG.info(event);
-                        eventArrived = true;
-                        count.incrementAndGet();
-                    }
-                }
-            });
             siddhiAppRuntimeSource.start();
-            Thread.sleep(4000);
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "@App:name('TestExecutionPlan') " +
-                            "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                            "topic='mqtt_receive_without_url', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-            siddhiAppRuntime.start();
-
-            ArrayList<Event> arrayList = new ArrayList<Event>();
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-            fooStream.send(arrayList.toArray(new Event[3]));
-            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
-            AssertJUnit.assertEquals(3, count.get());
             siddhiAppRuntimeSource.shutdown();
-            siddhiAppRuntime.shutdown();
-        } catch (Exception e) {
-            LOG.warn("Error while connecting with the Mqtt Server ");
-        }
     }
 
-    @Test
-    public void testMqttWithoutTopic() throws InterruptedException, IOException, ConnectionUnavailableException {
+    @Test(expectedExceptions = {SiddhiAppValidationException.class})
+    public void testMqttWithoutTopic() {
         LOG.info("test for receive events without topic");
-        try {
             SiddhiManager siddhiManager = new SiddhiManager();
             SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                     "@App:name('TestExecutionPlan2') " +
                             "define stream BarStream2 (symbol string, price float, volume long); " +
                             "@info(name = 'query1') " +
-                            "@source(type='mqtt',topic = 'mqtt_receive_without_topic',url= 'tcp://localhost:1883'," +
+                            "@source(type='mqtt',url= 'tcp://localhost:1883'," +
                             "clean.session='true', keep.alive= '60', @map(type='xml'))" +
                             "Define stream FooStream2 (symbol string, price float, volume long);" +
                             "from FooStream2 select symbol, price, volume insert into BarStream2;");
@@ -251,95 +226,31 @@ public class MqttSourceTestCase {
                 }
             });
             siddhiAppRuntimeSource.start();
-            Thread.sleep(4000);
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "@App:name('TestExecutionPlan') " +
-                            "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                            "topic='mqtt_receive_without_topic', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-            siddhiAppRuntime.start();
-
-            ArrayList<Event> arrayList = new ArrayList<Event>();
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-            fooStream.send(arrayList.toArray(new Event[3]));
-            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
-            AssertJUnit.assertEquals(3, count.get());
             siddhiAppRuntimeSource.shutdown();
-            siddhiAppRuntime.shutdown();
-
-        } catch (Exception e) {
-            LOG.warn("Mqtt topic is not provided ");
-        }
     }
 
     @Test
-    public void mqttReceiveWithInvalidBrokerCredintials() throws InterruptedException, IOException,
-            ConnectionUnavailableException {
+    public void mqttReceiveWithInvalidBrokerCredintials()  {
         LOG.info("test for receive events invalid broker credintials");
-        try {
             SiddhiManager siddhiManager = new SiddhiManager();
             SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                     "@App:name('TestExecutionPlan2') " +
                             "define stream BarStream2 (symbol string, price float, volume long); " +
                             "@info(name = 'query1') " +
-                            "@source(type='mqtt_receive_with_invalid_url',url= 'tcp://localhost:1887'," +
+                            "@source(type='mqtt',topic='mqtt_receive_with_invalid_url',url= 'tcp://localhost:1887'," +
                             "topic = 'mqtt_topic51'," +
                             "clean.session='true', keep.alive= '60', @map(type='xml'))" +
                             "Define stream FooStream2 (symbol string, price float, volume long);" +
                             "from FooStream2 select symbol, price, volume insert into BarStream2;");
-            siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
-                @Override
-                public void receive(Event[] events) {
-                    for (Event event : events) {
-                        LOG.info(event);
-                        eventArrived = true;
-                        count.incrementAndGet();
-                    }
-                }
-            });
             siddhiAppRuntimeSource.start();
-            Thread.sleep(4000);
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "@App:name('TestExecutionPlan') " +
-                            "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                            "topic='mqtt_receive_with_invalid_url', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-            siddhiAppRuntime.start();
-
-            ArrayList<Event> arrayList = new ArrayList<Event>();
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
-            arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-            fooStream.send(arrayList.toArray(new Event[3]));
-            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
-            AssertJUnit.assertEquals(3, count.get());
             siddhiAppRuntimeSource.shutdown();
-            siddhiAppRuntime.shutdown();
 
-        } catch (Exception e) {
-            LOG.warn("invalid broker credintials ");
-        }
+
     }
 
     @Test
-    public void mqttReceiveWithoutCleanSession() throws InterruptedException,
-            IOException, ConnectionUnavailableException {
+    public void mqttReceiveWithoutCleanSession()  {
         LOG.info("test for receive events without clean session");
-
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -361,7 +272,11 @@ public class MqttSourceTestCase {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -379,8 +294,12 @@ public class MqttSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-        fooStream.send(arrayList.toArray(new Event[3]));
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        try {
+            fooStream.send(arrayList.toArray(new Event[3]));
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
@@ -388,9 +307,8 @@ public class MqttSourceTestCase {
     }
 
     @Test
-    public void mqttReceiveWithoutKeepAlive() throws InterruptedException, IOException, ConnectionUnavailableException {
+    public void mqttReceiveWithoutKeepAlive()  {
         LOG.info("test for receive events without keep Alive");
-
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -411,7 +329,11 @@ public class MqttSourceTestCase {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -429,8 +351,12 @@ public class MqttSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-        fooStream.send(arrayList.toArray(new Event[3]));
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        try {
+            fooStream.send(arrayList.toArray(new Event[3]));
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();
@@ -438,10 +364,8 @@ public class MqttSourceTestCase {
     }
 
     @Test
-    public void mqttReceiveWithCleanSessionFalse() throws InterruptedException, IOException,
-            ConnectionUnavailableException {
+    public void mqttReceiveWithCleanSessionFalse()  {
         LOG.info("test for receive events with clean session false");
-
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -463,7 +387,11 @@ public class MqttSourceTestCase {
             }
         });
         siddhiAppRuntimeSource.start();
-        Thread.sleep(4000);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
                         "define stream FooStream (symbol string, price float, volume long); " +
@@ -482,8 +410,203 @@ public class MqttSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 55.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", 75.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", 57.6f, 100L}));
-        fooStream.send(arrayList.toArray(new Event[3]));
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        try {
+            fooStream.send(arrayList.toArray(new Event[3]));
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+            AssertJUnit.assertEquals(3, count.get());
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        siddhiAppRuntimeSource.shutdown();
+        siddhiAppRuntime.shutdown();
+
+    }
+    @Test
+    public void mqttRecieveEventsWithMultipleTopics() {
+        LOG.info("Test for Mqtt Recieve events with Multiple topics");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan2') " +
+                        "define stream BarStream2 (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@source(type='mqtt',url= 'tcp://localhost:1883'," +
+                        "topic = 'mqtt/receives/MultipleTopics'," +
+                        "quality.of.service='1',clean.session='true', keep.alive= '60',@map(type='xml'))" +
+                        "Define stream FooStream2 (symbol string, price float, volume long);" +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2;");
+        siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                for (Event event : events) {
+                    LOG.info(event);
+                    eventArrived = true;
+                    count.incrementAndGet();
+                }
+            }
+        });
+        siddhiAppRuntimeSource.start();
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan') " +
+                        "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt/receives/MultipleTopics',quality.of.service='1', clean.session='true'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
+        siddhiAppRuntime.start();
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+            AssertJUnit.assertEquals(3, count.get());
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        siddhiAppRuntimeSource.shutdown();
+        siddhiAppRuntime.shutdown();
+
+    }
+
+    @Test
+    public void mqttRecieveEventsWithMultiLevel() {
+        LOG.info("Test for Mqtt Recieve events with wildcard topics subscriptions with Multi level");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan2') " +
+                        "define stream BarStream2 (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@source(type='mqtt',url= 'tcp://localhost:1883',topic = 'mqtt/receive/#'," +
+                        "quality.of.service='1',clean.session='true', keep.alive= '60',@map(type='xml'))" +
+                        "Define stream FooStream2 (symbol string, price float, volume long);" +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2;");
+        siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                for (Event event : events) {
+                    LOG.info(event);
+                    eventArrived = true;
+                    count.incrementAndGet();
+                }
+            }
+        });
+        siddhiAppRuntimeSource.start();
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan') " +
+                        "define stream FooStream (symbol string, price float, volume long); " +
+                        "define stream FooStream2 (symbol string, price float, volume long); " +
+
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt/receive/MultipleTopics',quality.of.service='1', clean.session='true'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+
+                        "@info(name = 'query2') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt/receive/SingleTopics',quality.of.service='1', clean.session='true'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream2 (symbol string, price float, volume long);" +
+
+                        "from FooStream select symbol, price, volume insert into BarStream; " +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2; ");
+        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
+        InputHandler fooStream2 = siddhiAppRuntime.getInputHandler("FooStream2");
+        siddhiAppRuntime.start();
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream2.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream2.send(new Object[]{"WSO2", 57.6f, 100L});
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        AssertJUnit.assertEquals(3, count.get());
+        siddhiAppRuntimeSource.shutdown();
+        siddhiAppRuntime.shutdown();
+
+    }
+
+    @Test
+    public void mqttRecieveEventsWithSingleLevel() {
+        LOG.info("Test for Mqtt Recieve events with wildcard topics subscriptions with Single level");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan2') " +
+                        "define stream BarStream2 (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@source(type='mqtt',url= 'tcp://localhost:1883',topic = 'mqtt/+/Topic'," +
+                        "quality.of.service='1',clean.session='true', keep.alive= '60',@map(type='xml'))" +
+                        "Define stream FooStream2 (symbol string, price float, volume long);" +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2;");
+        siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                for (Event event : events) {
+                    LOG.info(event);
+                    eventArrived = true;
+                    count.incrementAndGet();
+                }
+            }
+        });
+        siddhiAppRuntimeSource.start();
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan') " +
+                        "define stream FooStream (symbol string, price float, volume long); " +
+                        "define stream FooStream2 (symbol string, price float, volume long); " +
+
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt/multiple/Topic',quality.of.service='1', clean.session='true'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+
+                        "@info(name = 'query2') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt/single/Topic',quality.of.service='1', clean.session='true'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream2 (symbol string, price float, volume long);" +
+
+                        "from FooStream select symbol, price, volume insert into BarStream; " +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2; ");
+        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
+        InputHandler fooStream2 = siddhiAppRuntime.getInputHandler("FooStream2");
+        siddhiAppRuntime.start();
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream2.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream2.send(new Object[]{"WSO2", 57.6f, 100L});
+            SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();

@@ -96,7 +96,7 @@ public class MqttSinkMapTest {
             fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            AssertJUnit.fail("Thread sleep was not interrupted");
+            AssertJUnit.fail("Thread sleep was interrupted");
         }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
@@ -134,7 +134,7 @@ public class MqttSinkMapTest {
             fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            AssertJUnit.fail("Thread sleep was not interrupted");
+            AssertJUnit.fail("Thread sleep was interrupted");
         }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();

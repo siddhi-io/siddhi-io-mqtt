@@ -99,7 +99,7 @@ public class MqttSourceQosTest {
         try {
             Thread.sleep(4000);
         } catch (InterruptedException e) {
-            AssertJUnit.fail("Thread sleep was not interrupted");
+            AssertJUnit.fail("Thread sleep was interrupted");
         }
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan') " +
@@ -119,7 +119,7 @@ public class MqttSourceQosTest {
             fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
             SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
         } catch (InterruptedException e) {
-            AssertJUnit.fail("Thread sleep was not interrupted");
+            AssertJUnit.fail("Thread sleep was interrupted");
         }
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
