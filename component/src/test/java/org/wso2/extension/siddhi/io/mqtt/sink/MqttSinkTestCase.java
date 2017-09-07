@@ -33,6 +33,7 @@ import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -72,14 +73,15 @@ public class MqttSinkTestCase {
     }
 
     @Test
-    public void mqttPublishSingleEvent() throws InterruptedException {
+    public void mqttPublishSingleEvent() {
         log.info("Mqtt Publish test for single event");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_publish_single_event', clean.session='true', message.retain='false', " +
+                        "topic='mqtt_publish_single_event',username='mqtt-user', " +
+                        "password='mqtt-password', clean.session='true', message.retain='false', " +
                         "quality.of.service= '1', keep.alive= '60'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
@@ -91,174 +93,122 @@ public class MqttSinkTestCase {
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
-
         siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-        Thread.sleep(10000);
-
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
-
-
     }
 
     @Test
-    public void mqttPublishMultipleEvents() throws InterruptedException, ConnectionUnavailableException {
+    public void mqttPublishMultipleEvents() {
         log.info("Mqtt Publish test for multiple events");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_publish_multiple_event', clean.session='true', message.retain='false', " +
+                        "topic='mqtt_publish_multiple_event',username='mqtt-user', " +
+                        "password='mqtt-password', clean.session='true', message.retain='false', " +
                         "quality.of.service= '1',keep.alive= '60'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_multiple_event", 1);
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_multiple_event", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
         siddhiAppRuntime.start();
         ArrayList<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"single_topic", 55.6f, 100L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"single_topic2", 75.6f, 102L}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"single_topic3", 57.6f, 103L}));
-        fooStream.send(arrayList.toArray(new Event[3]));
 
-        Thread.sleep(10000);
-
+        try {
+            fooStream.send(arrayList.toArray(new Event[3]));
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(1, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
+    }
 
-
+    @Test(expectedExceptions = {SiddhiAppValidationException.class})
+    public void mqttPublishWithoutUrlTest() {
+        log.info("Mqqt Publish without url test");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', " +
+                        "topic='mqtt_publish_without_url', clean.session='true'," +
+                        "username='mqtt-user', " +
+                        "password='mqtt-password', message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        siddhiAppRuntime.start();
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
-    public void mqttPublishWithoutUrlTest() throws InterruptedException, ConnectionUnavailableException {
-        try {
-            log.info("Mqqt Publish without url test");
-            SiddhiManager siddhiManager = new SiddhiManager();
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', " +
-                            "topic='mqtt_publish_without_url', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_without_url", 1);
-
-            siddhiAppRuntime.start();
-            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-            Thread.sleep(10000);
-
-            count = mqttTestClient.getCount();
-            eventArrived = mqttTestClient.getEventArrived();
-
-            AssertJUnit.assertEquals(3, count);
-            AssertJUnit.assertTrue(eventArrived);
-            siddhiAppRuntime.shutdown();
-        } catch (Exception e) {
-            log.warn("Mqtt url is not provided ");
-        }
-
-    }
-
-    @Test
-    public void mqttPublishWithInvalidBrokerCredintials() throws InterruptedException, ConnectionUnavailableException {
+    public void mqttPublishWithInvalidBrokerCredintials() {
         log.info("test for publish events with invalid broker credintials");
-        try {
-            SiddhiManager siddhiManager = new SiddhiManager();
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', " +
-                            "topic='mqtt_publish_with_invalid_url', url= 'tcp://localhost:1889', " +
-                            "clean.session='true'," +
-                            " message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_with_invalid_url", 1);
-
-            siddhiAppRuntime.start();
-            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-            Thread.sleep(10000);
-
-            count = mqttTestClient.getCount();
-            eventArrived = mqttTestClient.getEventArrived();
-
-            AssertJUnit.assertEquals(0, count);
-            AssertJUnit.assertFalse(eventArrived);
-            siddhiAppRuntime.shutdown();
-        } catch (Exception e) {
-            log.warn("Mqtt broker url is invalid");
-        }
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', " +
+                        "topic='mqtt_publish_with_invalid_url', url= 'tcp://localhost:1889', " +
+                        "clean.session='true'," +
+                        "username='mqtt-user',password='mqtt-password'," +
+                        " message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        siddhiAppRuntime.start();
+        siddhiAppRuntime.shutdown();
     }
 
 
-    @Test
-    public void mqttPublishWithoutTopic() throws InterruptedException, ConnectionUnavailableException {
-        try {
-            log.info("test for publish without topic ");
-            SiddhiManager siddhiManager = new SiddhiManager();
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', " +
-                            "url= 'tcp://localhost:1883', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '1',keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_without_topic", 1);
-            siddhiAppRuntime.start();
-            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-            Thread.sleep(10000);
-
-            count = mqttTestClient.getCount();
-            eventArrived = mqttTestClient.getEventArrived();
-
-            AssertJUnit.assertEquals(3, count);
-            AssertJUnit.assertTrue(eventArrived);
-            siddhiAppRuntime.shutdown();
-        } catch (Exception e) {
-            log.warn("Mqtt topic is not provided ");
-        }
+    @Test(expectedExceptions = {SiddhiAppValidationException.class})
+    public void mqttPublishWithoutTopic() {
+        log.info("test for publish without topic ");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', " +
+                        "url= 'tcp://localhost:1883', clean.session='true', message.retain='false', " +
+                        "quality.of.service= '1',keep.alive= '60'," +
+                        "username='mqtt-user',password='mqtt-password'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        siddhiAppRuntime.start();
+        siddhiAppRuntime.shutdown();
     }
 
     @Test
-    public void mqttPublishWithoutCleanSession() throws InterruptedException, ConnectionUnavailableException {
+    public void mqttPublishWithoutCleanSession() {
         log.info("Mqtt Publish test for without clean session");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
@@ -266,34 +216,37 @@ public class MqttSinkTestCase {
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
                         "topic='mqtt_publish_without_clean_session', message.retain='false', " +
-                        "quality.of.service= '1', keep.alive= '60'," +
+                        "quality.of.service= '1'," +
+                        "username='mqtt-user',password='mqtt-password', keep.alive= '60'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_without_clean_session", 1);
-
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_without_clean_session", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
         siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+        try {
 
-        Thread.sleep(10000);
-
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
-
-
     }
 
     @Test
-    public void mqttPublishWithoutKeepAlive() throws InterruptedException, ConnectionUnavailableException {
+    public void mqttPublishWithoutKeepAlive() {
         log.info("Mqtt Publish test for without keep alive");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
@@ -301,35 +254,37 @@ public class MqttSinkTestCase {
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
                         "topic='mqtt_publish_without_keep_alive', message.retain='false', " +
-                        "quality.of.service= '1', clean.session='true'," +
+                        "quality.of.service= '1'," +
+                        "username='mqtt-user',password='mqtt-password', clean.session='true'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_without_keep_alive", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
+        try {
+            siddhiAppRuntime.start();
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
 
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_without_keep_alive", 1);
-
-
-        siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-        Thread.sleep(10000);
-
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
-
-
     }
 
     @Test
-    public void mqttPublishWithCleanSessionFalse() throws InterruptedException, ConnectionUnavailableException {
+    public void mqttPublishWithCleanSessionFalse() {
         log.info("Mqtt Publish test for with clean session false");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
@@ -337,30 +292,32 @@ public class MqttSinkTestCase {
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
                         "topic='mqtt_publish_with_clean_session_false', message.retain='false', " +
-                        "quality.of.service= '1', clean.session='false'," +
+                        "quality.of.service= '1'," +
+                        "username='mqtt-user',password='mqtt-password', clean.session='false'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_with_clean_session_false", 1);
-
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_with_clean_session_false", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
         siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-        Thread.sleep(10000);
-
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
-
-
     }
 
 }

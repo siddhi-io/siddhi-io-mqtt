@@ -29,6 +29,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
 import java.rmi.RemoteException;
@@ -67,39 +68,70 @@ public class MqttSinkQosTestCase {
     }
 
     @Test
-    public void mqttPublishEventsWithInvalidQos() throws Exception {
+    public void mqttPublishEventsWithoutQos() {
+        log.info("Test for Mqtt publish events without providing QOS");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt_publish_event_without_qos',username='mqtt-user', " +
+                        "password='mqtt-password', clean.session='true', message.retain='false', " +
+                        "keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            log.info("Test for Mqtt Publish events with invalid QOS");
-            SiddhiManager siddhiManager = new SiddhiManager();
-            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                    "define stream FooStream (symbol string, price float, volume long); " +
-                            "@info(name = 'query1') " +
-                            "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                            "topic='mqtt_publish_event_differ_qos', clean.session='true', message.retain='false', " +
-                            "quality.of.service= '3', keep.alive= '60'," +
-                            "@map(type='xml'))" +
-                            "Define stream BarStream (symbol string, price float, volume long);" +
-                            "from FooStream select symbol, price, volume insert into BarStream;");
-            InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_event_differ_qos", 1);
-
-            siddhiAppRuntime.start();
+                    "mqtt_publish_event_without_qos", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
+        siddhiAppRuntime.start();
+        try {
             fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
             fooStream.send(new Object[]{"IBM", 75.6f, 100L});
             fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
             Thread.sleep(10000);
-
-            count = mqttTestClient.getCount();
-            eventArrived = mqttTestClient.getEventArrived();
-
-            AssertJUnit.assertEquals(3, count);
-            AssertJUnit.assertTrue(eventArrived);
-            siddhiAppRuntime.shutdown();
-        } catch (Exception e) {
-            log.warn("Qos value should takes 0 or 1 or 2");
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
         }
+        count = mqttTestClient.getCount();
+        eventArrived = mqttTestClient.getEventArrived();
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
+        siddhiAppRuntime.shutdown();
+    }
 
+    @Test(expectedExceptions = {IllegalArgumentException.class})
+    public void mqttPublishEventsWithInvalidQos() {
+        log.info("Test for Mqtt Publish events with invalid QOS");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
+                "define stream FooStream (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
+                        "topic='mqtt_publish_event_differ_qos',username='mqtt-user', " +
+                        "password='mqtt-password', clean.session='true', message.retain='false', " +
+                        "quality.of.service= '3', keep.alive= '60'," +
+                        "@map(type='xml'))" +
+                        "Define stream BarStream (symbol string, price float, volume long);" +
+                        "from FooStream select symbol, price, volume insert into BarStream;");
+        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_event_without_qos", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
+        try {
+            siddhiAppRuntime.start();
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was not interrupted");
+        }
+        siddhiAppRuntime.shutdown();
     }
 }
