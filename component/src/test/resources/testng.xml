@@ -20,12 +20,11 @@
 <suite name="MqttIoTestSuit" verbose="1">
     <test name="MqttIoTest">
         <classes>
-            <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkBrokerTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkMapTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkQosTestCase" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkTestCase" />
 
-            <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceBrokerTest" />
+            <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceQosTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceMapTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceTestCase" />
 

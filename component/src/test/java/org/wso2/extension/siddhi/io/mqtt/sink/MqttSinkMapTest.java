@@ -39,7 +39,7 @@ public class MqttSinkMapTest {
     private volatile int count;
     private volatile boolean eventArrived;
     private static final Logger log = Logger.getLogger(MqttSinkMapTest.class);
-    private  static final Server mqttBroker = new Server();
+    private static final Server mqttBroker = new Server();
     private MqttTestClient mqttTestClient;
 
     @BeforeMethod
@@ -47,6 +47,7 @@ public class MqttSinkMapTest {
         count = 0;
         eventArrived = false;
     }
+
     @BeforeClass
     public static void init() throws Exception {
         try {
@@ -60,77 +61,85 @@ public class MqttSinkMapTest {
             throw new RemoteException("Exception caught when starting server", e);
         }
     }
+
     @AfterClass
     public static void stop() {
         mqttBroker.stopServer();
     }
+
     @Test
-    public void mqttPublishWithXmlMapping() throws ConnectionUnavailableException, InterruptedException {
+    public void mqttPublishWithXmlMapping() {
         log.info("Mqtt Publish test for XML Mapping");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_publish_xml_map', message.retain='false', " +
+                        "topic='mqtt_publish_xml_map',username='mqtt-user', " +
+                        "password='mqtt-password',keep.alive='60', message.retain='false', " +
                         "quality.of.service= '1', clean.session='true'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
 
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_xml_map", 1);
-
-
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_xml_map", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
         siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-        Thread.sleep(10000);
-
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
-
     }
+
     @Test
-    public void mqttPublishWithJsonMapping() throws ConnectionUnavailableException, InterruptedException {
+    public void mqttPublishWithJsonMapping() {
         log.info("Mqtt Publish test for JSON Mapping");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_publish_json_map', message.retain='false', " +
+                        "topic='mqtt_publish_json_map',username='mqtt-user', " +
+                        "password='mqtt-password',keep.alive='60', message.retain='false', " +
                         "quality.of.service= '1', clean.session='true'," +
                         "@map(type='json'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
                         "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-
-        this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                "mqtt_publish_json_map", 1);
-
+        try {
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
+                    "mqtt_publish_json_map", 1);
+        } catch (ConnectionUnavailableException e) {
+            AssertJUnit.fail("Could not connect to broker.");
+        }
         siddhiAppRuntime.start();
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-
-        Thread.sleep(10000);
-
+        try {
+            fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
+            fooStream.send(new Object[]{"IBM", 75.6f, 100L});
+            fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            AssertJUnit.fail("Thread sleep was interrupted");
+        }
         count = mqttTestClient.getCount();
         eventArrived = mqttTestClient.getEventArrived();
-
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
-
-
     }
 }

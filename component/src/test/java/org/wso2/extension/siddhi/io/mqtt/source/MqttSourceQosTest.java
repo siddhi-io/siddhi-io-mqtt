@@ -34,19 +34,24 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.SiddhiTestHelper;
 
-
 import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
-public class MqttSourceMapTest {
-    static final Logger LOG = Logger.getLogger(MqttSourceMapTest.class);
-    private static final Server mqttBroker = new Server();
+public class MqttSourceQosTest {
+    static final Logger LOG = Logger.getLogger(MqttSourceQosTest.class);
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
     private int timeout = 30000;
     private volatile boolean eventArrived;
+    private static final Server mqttBroker = new Server();
+
+
+    @BeforeMethod
+    public void initBeforeMethod() {
+        count.set(0);
+        eventArrived = false;
+    }
 
     @BeforeClass
     public static void init() throws Exception {
@@ -67,76 +72,16 @@ public class MqttSourceMapTest {
         mqttBroker.stopServer();
     }
 
-    @BeforeMethod
-    public void initBeforeMethod() {
-        count.set(0);
-        eventArrived = false;
-    }
-
     @Test
-    public void mqttRecieveWithJSONMapping() {
-        LOG.info("test for recieve events with JSON Mapping");
+    public void mqttRecieveEventsWithoutQos() {
+        LOG.info("Test for Mqtt Recieve events without providing QOS");
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
                         "define stream BarStream2 (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
-                        "@source(type='mqtt',url= 'tcp://localhost:1883',topic = 'mqtt_recieve_json_map'," +
-                        "clean.session='true', keep.alive= '60',@map(type='json'))" +
-                        "Define stream FooStream2 (symbol string, price float, volume long);" +
-                        "from FooStream2 select symbol, price, volume insert into BarStream2;");
-        siddhiAppRuntimeSource.addCallback("BarStream2", new StreamCallback() {
-            @Override
-            public void receive(Event[] events) {
-                for (Event event : events) {
-                    LOG.info(event);
-                    eventArrived = true;
-                    count.incrementAndGet();
-                }
-            }
-        });
-        siddhiAppRuntimeSource.start();
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            AssertJUnit.fail("Thread sleep was interrupted");
-        }
-        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
-                "@App:name('TestExecutionPlan') " +
-                        "define stream FooStream (symbol string, price float, volume long); " +
-                        "@info(name = 'query1') " +
-                        "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_recieve_json_map', clean.session='true', message.retain='false', " +
-                        "quality.of.service= '1',keep.alive= '60'," +
-                        "@map(type='json'))" +
-                        "Define stream BarStream (symbol string, price float, volume long);" +
-                        "from FooStream select symbol, price, volume insert into BarStream;");
-        InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
-        siddhiAppRuntime.start();
-    try {
-        fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-        fooStream.send(new Object[]{"IBM", 75.6f, 100L});
-        fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-        SiddhiTestHelper.waitForEvents(waitTime, 3, count, timeout);
-    } catch (InterruptedException e) {
-        AssertJUnit.fail("Thread sleep was interrupted");
-    }
-        AssertJUnit.assertEquals(3, count.get());
-        siddhiAppRuntimeSource.shutdown();
-        siddhiAppRuntime.shutdown();
-
-    }
-
-    @Test
-    public void mqttRecieveWithXmlMapping() {
-        LOG.info("test for recieve events with XML Mapping");
-
-        SiddhiManager siddhiManager = new SiddhiManager();
-        SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
-                "@App:name('TestExecutionPlan2') " +
-                        "define stream BarStream2 (symbol string, price float, volume long); " +
-                        "@info(name = 'query1') " +
-                        "@source(type='mqtt',url= 'tcp://localhost:1883',topic = 'mqtt_recieve_xml_map'," +
+                        "@source(type='mqtt',url= 'tcp://localhost:1883',topic = 'mqtt_receive_event_without_qos'," +
+                        "username='mqtt-user',password='mqtt-password'," +
                         "clean.session='true', keep.alive= '60',@map(type='xml'))" +
                         "Define stream FooStream2 (symbol string, price float, volume long);" +
                         "from FooStream2 select symbol, price, volume insert into BarStream2;");
@@ -161,7 +106,7 @@ public class MqttSourceMapTest {
                         "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
                         "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
-                        "topic='mqtt_recieve_xml_map', clean.session='true', message.retain='false', " +
+                        "topic='mqtt_receive_event_without_qos', clean.session='true', message.retain='false', " +
                         "quality.of.service= '1',keep.alive= '60'," +
                         "@map(type='xml'))" +
                         "Define stream BarStream (symbol string, price float, volume long);" +
@@ -182,5 +127,23 @@ public class MqttSourceMapTest {
 
     }
 
+    @Test(expectedExceptions = {IllegalArgumentException.class})
+    public void mqttRecieveEventsWithInvalidQos() {
+        LOG.info("Test for Mqtt Recieve events with invalid QOS");
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
+                "@App:name('TestExecutionPlan2') " +
+                        "define stream BarStream2 (symbol string, price float, volume long); " +
+                        "@info(name = 'query1') " +
+                        "@source(type='mqtt',url= 'tcp://localhost:1883'," +
+                        "topic = 'mqtt_receive_event_with_invalid_qos'," +
+                        "username='mqtt-user',password='mqtt-password'," +
+                        "quality.of.service= '3'," +
+                        "clean.session='true', keep.alive= '60',@map(type='xml'))" +
+                        "Define stream FooStream2 (symbol string, price float, volume long);" +
+                        "from FooStream2 select symbol, price, volume insert into BarStream2;");
+        siddhiAppRuntimeSource.start();
+        siddhiAppRuntimeSource.shutdown();
 
+    }
 }
