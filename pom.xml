@@ -74,6 +74,12 @@
                 <version>${siddhi.map.binary.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.agent</artifactId>
+                <classifier>runtime</classifier>
+                <version>${jacoco.plugin.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -85,7 +91,7 @@
         <log4j.version>1.2.17.wso2v1</log4j.version>
         <siddhi.mapper.json.version>4.0.4</siddhi.mapper.json.version>
         <siddhi.mapper.xml.version>4.0.0</siddhi.mapper.xml.version>
-        <jacoco.plugin.version>0.7.8</jacoco.plugin.version>
+        <jacoco.plugin.version>0.7.9</jacoco.plugin.version>
     </properties>
     <build>
         <!--suppress MavenDuplicatePluginInspection -->
@@ -127,7 +133,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${basedir}/target/jacoco.exec</destFile>
+                            <destFile>${basedir}/target/coverage-reports/jacoco.exec</destFile>
                             <propertyName>surefireArgLine</propertyName>
                         </configuration>
                     </execution>
@@ -138,7 +144,7 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <dataFile>${basedir}/target/jacoco.exec</dataFile>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco.exec</dataFile>
                             <outputDirectory>${basedir}/target/coverage-reports/</outputDirectory>
                         </configuration>
                     </execution>
