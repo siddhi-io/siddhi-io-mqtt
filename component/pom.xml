@@ -118,6 +118,6 @@
         </plugins>
     </build>
     <properties>
-    <xml.mapper.version>4.0.0</xml.mapper.version>
+    <xml.mapper.version>4.0.1</xml.mapper.version>
     </properties>
 </project>
