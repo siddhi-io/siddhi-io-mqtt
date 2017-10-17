@@ -23,6 +23,7 @@
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkMapTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkQosTestCase" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkTestCase" />
+            <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttPublishTestCase" />
 
             <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceQosTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.source.MqttSourceMapTest" />
