@@ -39,6 +39,7 @@ import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class MqttSinkTestCase {
@@ -77,6 +78,7 @@ public class MqttSinkTestCase {
     public void mqttPublishSingleEvent() {
         log.info("Mqtt Publish test for single event");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883', "
@@ -87,7 +89,8 @@ public class MqttSinkTestCase {
                         + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_single_event", 1);
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_single_event", 1,
+                    resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -95,7 +98,7 @@ public class MqttSinkTestCase {
         try {
             fooStream.send(new Object[] { "WSO2", 55.6f, 100L });
             fooStream.send(new Object[] { "IBM", 75.6f, 100L });
-            fooStream.send(new Object[] { "WSO2", 57.6f, 100L });
+            fooStream.send(new Object[] { "JAMES", 75.6f, 100L });
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was  interrupted");
@@ -104,6 +107,9 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("JAMES"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -111,6 +117,7 @@ public class MqttSinkTestCase {
     public void mqttPublishMultipleEvents() {
         log.info("Mqtt Publish test for multiple events");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(1);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883', "
@@ -121,18 +128,16 @@ public class MqttSinkTestCase {
                         + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_multiple_event", 1);
+           this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_multiple_event", 1,
+                    resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
         siddhiAppRuntime.start();
-        ArrayList<Event> arrayList = new ArrayList<Event>();
+        List<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "single_topic", 55.6f, 100L }));
-        arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "single_topic2", 75.6f, 102L }));
-        arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "single_topic3", 57.6f, 103L }));
-
         try {
-            fooStream.send(arrayList.toArray(new Event[3]));
+            fooStream.send(arrayList.toArray(new Event[1]));
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
@@ -141,6 +146,7 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(1, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("single_topic"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -193,6 +199,7 @@ public class MqttSinkTestCase {
     public void mqttPublishWithoutCleanSession() {
         log.info("Mqtt Publish test for without clean session");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883', "
@@ -203,7 +210,8 @@ public class MqttSinkTestCase {
                         + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_without_clean_session", 1);
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_without_clean_session", 1,
+                    resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -221,6 +229,9 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -228,6 +239,7 @@ public class MqttSinkTestCase {
     public void mqttPublishWithoutKeepAlive() {
         log.info("Mqtt Publish test for without keep alive");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883', "
@@ -238,7 +250,8 @@ public class MqttSinkTestCase {
                         + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_without_keep_alive", 1);
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_without_keep_alive", 1,
+                    resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -256,6 +269,9 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -263,6 +279,7 @@ public class MqttSinkTestCase {
     public void mqttPublishWithCleanSessionFalse() {
         log.info("Mqtt Publish test for with clean session false");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883', "
@@ -274,7 +291,7 @@ public class MqttSinkTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_with_clean_session_false",
-                    1);
+                    1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -291,6 +308,9 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -298,6 +318,7 @@ public class MqttSinkTestCase {
     public void mqttPublishWithDifferentValueKeepAlive() {
         log.info("Mqtt Publish test for Diffferent values of keep.alive");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883',username='mqtt-user',"
@@ -310,7 +331,7 @@ public class MqttSinkTestCase {
 
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_with_different_keep_alive",
-                    1);
+                    1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -327,12 +348,16 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
     }
 
     @Test
     public void mqttPublishWithoutBrokerCredentials() {
         log.info("Mqtt Publish test for Diffferent values of keep.alive");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
                         + "@sink(type='mqtt', url= 'tcp://localhost:1883',"
@@ -344,7 +369,7 @@ public class MqttSinkTestCase {
 
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_without_broker_credentials",
-                    1);
+                    1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -361,6 +386,9 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
     }
 
     @Test
@@ -368,6 +396,7 @@ public class MqttSinkTestCase {
         log.info("Test for persist and restore state ");
         PersistenceStore persistenceStore = new InMemoryPersistenceStore();
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         siddhiManager.setPersistenceStore(persistenceStore);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " + "@info(name = 'query1') "
@@ -379,7 +408,8 @@ public class MqttSinkTestCase {
                         + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
-            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_event_persist", 1);
+            this.mqttTestClient = new MqttTestClient("tcp://localhost:1883", "mqtt_publish_event_persist", 1,
+                    resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -387,14 +417,14 @@ public class MqttSinkTestCase {
         try {
             fooStream.send(new Object[] { "WSO2", 55.6f, 100L });
             fooStream.send(new Object[] { "IBM", 75.6f, 100L });
-            fooStream.send(new Object[] { "WSO2", 57.6f, 100L });
+            fooStream.send(new Object[] { "JAMES", 57.6f, 100L });
             Thread.sleep(500);
             siddhiAppRuntime.persist();
             siddhiAppRuntime.shutdown();
             fooStream = siddhiAppRuntime.getInputHandler("FooStream");
             siddhiAppRuntime.start();
             siddhiAppRuntime.restoreLastRevision();
-            fooStream.send(new Object[] { "IBM", 75.6f, 100L });
+            fooStream.send(new Object[] { "MIKE", 75.6f, 100L });
             Thread.sleep(500);
 
         } catch (InterruptedException e) {
@@ -404,6 +434,10 @@ public class MqttSinkTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(4, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("JAMES"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("MIKE"));
         siddhiAppRuntime.shutdown();
     }
 }

@@ -164,7 +164,7 @@ public class MqttSourceTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
 
-        ArrayList<Event> arrayList = new ArrayList<Event>();
+        List<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 55.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "IBM", 75.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 57.6f, 100L }));
@@ -214,7 +214,6 @@ public class MqttSourceTestCase {
                     LOG.info(event);
                     eventArrived = true;
                     count.incrementAndGet();
-                    ;
                 }
             }
         });
@@ -276,7 +275,7 @@ public class MqttSourceTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
 
-        ArrayList<Event> arrayList = new ArrayList<Event>();
+        List<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 55.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "IBM", 75.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 57.6f, 100L }));
@@ -330,7 +329,7 @@ public class MqttSourceTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
 
-        ArrayList<Event> arrayList = new ArrayList<Event>();
+        List<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 55.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "IBM", 75.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 57.6f, 100L }));
@@ -384,7 +383,7 @@ public class MqttSourceTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
 
-        ArrayList<Event> arrayList = new ArrayList<Event>();
+        List<Event> arrayList = new ArrayList<Event>();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 55.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "IBM", 75.6f, 100L }));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 57.6f, 100L }));
@@ -607,8 +606,7 @@ public class MqttSourceTestCase {
                 + "from FooStream select symbol, price, volume insert into BarStream;");
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         siddhiAppRuntime.start();
-        ArrayList<Event> arrayList = new ArrayList<Event>();
-
+        List<Event> arrayList = new ArrayList<Event>();
         sources.forEach(e -> e.forEach(Source::pause));
         arrayList.clear();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "WSO2", 55.6f, 100L }));

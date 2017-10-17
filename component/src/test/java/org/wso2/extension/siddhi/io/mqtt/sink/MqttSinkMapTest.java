@@ -71,6 +71,7 @@ public class MqttSinkMapTest {
     public void mqttPublishWithXmlMapping() {
         log.info("Mqtt Publish test for XML Mapping");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
@@ -85,7 +86,7 @@ public class MqttSinkMapTest {
 
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_xml_map", 1);
+                    "mqtt_publish_xml_map", 1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -102,6 +103,9 @@ public class MqttSinkMapTest {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
 
     }
@@ -110,6 +114,7 @@ public class MqttSinkMapTest {
     public void mqttPublishWithJsonMapping() {
         log.info("Mqtt Publish test for JSON Mapping");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
@@ -123,7 +128,7 @@ public class MqttSinkMapTest {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_json_map", 1);
+                    "mqtt_publish_json_map", 1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -140,6 +145,9 @@ public class MqttSinkMapTest {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
     }
 }

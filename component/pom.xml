@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.wso2.extension.siddhi.map.json</groupId>
             <artifactId>siddhi-map-json</artifactId>
-            <version>4.0.4</version>
+            <version>4.0.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -118,6 +118,6 @@
         </plugins>
     </build>
     <properties>
-    <xml.mapper.version>4.0.1</xml.mapper.version>
+    <xml.mapper.version>4.0.2</xml.mapper.version>
     </properties>
 </project>

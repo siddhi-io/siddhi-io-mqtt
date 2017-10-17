@@ -77,7 +77,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <siddhi.version>4.0.0-M78</siddhi.version>
+        <siddhi.version>4.0.0-M106</siddhi.version>
         <mqtt.version>1.1.1</mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <siddhi.map.binary.version>1.0.0</siddhi.map.binary.version>
