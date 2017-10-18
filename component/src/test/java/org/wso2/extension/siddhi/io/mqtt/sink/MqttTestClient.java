@@ -43,6 +43,7 @@ public class MqttTestClient {
     private int keepAlive = 60;
     private int connectionTimeout = 30;
     private MqttReceiverCallBack mqttReceiverCallBack;
+    private final ResultContainer resultContainer;
 
     public class MqttReceiverCallBack implements MqttCallback {
         private boolean eventArrived = false;
@@ -54,6 +55,7 @@ public class MqttTestClient {
         public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
             eventArrived = true;
             count++;
+            resultContainer.eventReceived(mqttMessage);
         }
 
         public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
@@ -69,7 +71,9 @@ public class MqttTestClient {
     }
 
 
-    public MqttTestClient(String brokerURL, String topic, int qos) throws ConnectionUnavailableException {
+    public MqttTestClient(String brokerURL, String topic, int qos, ResultContainer resultContainer)
+            throws ConnectionUnavailableException {
+        this.resultContainer = resultContainer;
         try {
             persistence = new MemoryPersistence();
             clientId = MqttClient.generateClientId();

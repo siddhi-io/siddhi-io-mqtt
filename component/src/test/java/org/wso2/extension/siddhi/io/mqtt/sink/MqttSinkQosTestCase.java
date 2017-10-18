@@ -71,6 +71,7 @@ public class MqttSinkQosTestCase {
     public void mqttPublishEventsWithoutQos() {
         log.info("Test for Mqtt publish events without providing QOS");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(3);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
@@ -84,7 +85,7 @@ public class MqttSinkQosTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_event_without_qos", 1);
+                    "mqtt_publish_event_without_qos", 1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
@@ -101,6 +102,9 @@ public class MqttSinkQosTestCase {
         eventArrived = mqttTestClient.getEventArrived();
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("IBM"));
+        AssertJUnit.assertTrue(resultContainer.assertMessageContent("WSO2"));
         siddhiAppRuntime.shutdown();
     }
 
@@ -108,6 +112,7 @@ public class MqttSinkQosTestCase {
     public void mqttPublishEventsWithInvalidQos() {
         log.info("Test for Mqtt Publish events with invalid QOS");
         SiddhiManager siddhiManager = new SiddhiManager();
+        ResultContainer resultContainer = new ResultContainer(1);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
                 "define stream FooStream (symbol string, price float, volume long); " +
                         "@info(name = 'query1') " +
@@ -121,7 +126,7 @@ public class MqttSinkQosTestCase {
         InputHandler fooStream = siddhiAppRuntime.getInputHandler("FooStream");
         try {
             this.mqttTestClient = new MqttTestClient("tcp://localhost:1883",
-                    "mqtt_publish_event_without_qos", 1);
+                    "mqtt_publish_event_without_qos", 1, resultContainer);
         } catch (ConnectionUnavailableException e) {
             AssertJUnit.fail("Could not connect to broker.");
         }
