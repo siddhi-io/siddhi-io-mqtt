@@ -74,6 +74,18 @@
                 <version>${siddhi.map.binary.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.extension.siddhi.map.xml</groupId>
+                <artifactId>siddhi-map-xml</artifactId>
+                <version>${xml.mapper.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.extension.siddhi.map.json</groupId>
+                <artifactId>siddhi-map-json</artifactId>
+                <version>${json.mapper.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -83,8 +95,8 @@
         <siddhi.map.binary.version>1.0.0</siddhi.map.binary.version>
         <moquette.version>0.8</moquette.version>
         <log4j.version>1.2.17.wso2v1</log4j.version>
-        <siddhi.mapper.json.version>4.0.4</siddhi.mapper.json.version>
-        <siddhi.mapper.xml.version>4.0.0</siddhi.mapper.xml.version>
+        <json.mapper.version>4.0.6</json.mapper.version>
+        <xml.mapper.version>4.0.2</xml.mapper.version>
         <jacoco.plugin.version>0.7.9</jacoco.plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
