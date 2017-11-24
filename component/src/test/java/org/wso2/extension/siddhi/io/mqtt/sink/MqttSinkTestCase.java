@@ -23,6 +23,7 @@ import io.moquette.server.Server;
 import io.moquette.server.config.IConfig;
 import io.moquette.server.config.MemoryConfig;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -31,6 +32,7 @@ import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.exception.CannotRestoreSiddhiAppStateException;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.persistence.InMemoryPersistenceStore;
@@ -423,7 +425,11 @@ public class MqttSinkTestCase {
             siddhiAppRuntime.shutdown();
             fooStream = siddhiAppRuntime.getInputHandler("FooStream");
             siddhiAppRuntime.start();
-            siddhiAppRuntime.restoreLastRevision();
+            try {
+                siddhiAppRuntime.restoreLastRevision();
+            } catch (CannotRestoreSiddhiAppStateException e) {
+                Assert.fail("Error restoring last revision");
+            }
             fooStream.send(new Object[] { "MIKE", 75.6f, 100L });
             Thread.sleep(500);
 
