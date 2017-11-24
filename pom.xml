@@ -88,7 +88,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <siddhi.version>4.0.0-alpha</siddhi.version>
+        <siddhi.version>4.0.0-beta</siddhi.version>
         <paho.mqtt.version>1.1.1</paho.mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <siddhi.map.binary.version>1.0.6</siddhi.map.binary.version>
