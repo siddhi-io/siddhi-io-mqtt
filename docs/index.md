@@ -11,7 +11,7 @@ Find some useful links below:
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.15">1.0.15</a>.
+Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.16">1.0.16</a>.
 
 ## How to use 
 
@@ -45,8 +45,8 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.15/#mqtt-sink">mqtt</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink">(Sink)</a>)*<br><div style="padding-left: 1em;"><p>The MQTT sink publishes the events to an MQTT broker </p></div>
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.15/#mqtt-source">mqtt</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#source">(Source)</a>)*<br><div style="padding-left: 1em;"><p>The MQTT source receives the events from an MQTT broker </p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.16/#mqtt-sink">mqtt</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink">(Sink)</a>)*<br><div style="padding-left: 1em;"><p>The MQTT sink publishes the events to an MQTT broker </p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/1.0.16/#mqtt-source">mqtt</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#source">(Source)</a>)*<br><div style="padding-left: 1em;"><p>The MQTT source receives the events from an MQTT broker </p></div>
 
 ## How to Contribute
  
