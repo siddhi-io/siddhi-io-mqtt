@@ -29,10 +29,9 @@ import org.wso2.carbon.event.input.adapter.mqtt.MQTTEventAdapterFactory;
  */
 public class MQTTEventAdapterServiceDS {
 
-    private static final Log log = LogFactory.getLog(
-            org.wso2.carbon.event.input.adapter.mqtt.internal.ds.MQTTEventAdapterServiceDS.class);
+    private static final Log log = LogFactory.getLog(MQTTEventAdapterServiceDS.class);
 
-    protected void activate(org.osgi.service.component.ComponentContext context) {
+    protected void activate(ComponentContext context) {
 
         try {
             InputEventAdapterFactory mqttEventAdapterFactory = new MQTTEventAdapterFactory();

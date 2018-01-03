@@ -42,13 +42,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.KeyStoreException;
 import java.security.KeyManagementException;
 
-public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttCallback, Runnable {
+public class MQTTAdapterListener implements MqttCallback, Runnable {
 
-    private static final Log log = LogFactory.getLog(
-            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTAdapterListener.class);
+    private static final Log log = LogFactory.getLog(MQTTAdapterListener.class);
 
-    private org.eclipse.paho.client.mqttv3.MqttClient mqttClient;
-    private org.eclipse.paho.client.mqttv3.MqttConnectOptions connectionOptions;
+    private MqttClient mqttClient;
+    private MqttConnectOptions connectionOptions;
     private boolean cleanSession;
     private int keepAlive;
     private boolean connectionSSLEnabled;
@@ -68,10 +67,10 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
 
     public MQTTAdapterListener(MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration,
                                String topic, String mqttClientId, InputEventAdapterListener inputEventAdapterListener,
-                               int tenantId) throws java.io.IOException {
+                               int tenantId) throws IOException {
 
         if (mqttClientId == null || mqttClientId.trim().isEmpty()) {
-            mqttClientId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
+            mqttClientId = MqttClient.generateClientId();
         }
 
         this.mqttClientId = mqttClientId;
@@ -88,24 +87,24 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
         this.tenantId = tenantId;
         //SORTING messages until the server fetches them
         String temp_directory = System.getProperty("java.io.tmpdir");
-        org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence dataStore = new org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence(temp_directory);
+        MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(temp_directory);
 
         try {
             // Construct the connection options object that contains connection parameters
             // such as cleanSession and LWT
-            connectionOptions = new org.eclipse.paho.client.mqttv3.MqttConnectOptions();
+            connectionOptions = new MqttConnectOptions();
             connectionOptions.setCleanSession(cleanSession);
             connectionOptions.setKeepAliveInterval(keepAlive);
             //Create the secure connection
             if (connectionSSLEnabled) {
                 char[] trustStorePassword = sslTrustStorePassword.toCharArray();
-                java.security.KeyStore keyStore = java.security.KeyStore.getInstance(sslTrustStoreType);
-                fileInputStream = new java.io.FileInputStream(sslTrustStoreLocation);
+                KeyStore keyStore = KeyStore.getInstance(sslTrustStoreType);
+                fileInputStream = new FileInputStream(sslTrustStoreLocation);
                 keyStore.load(fileInputStream, trustStorePassword);
-                javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance
-                        (javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance
+                        (TrustManagerFactory.getDefaultAlgorithm());
                 trustManagerFactory.init(keyStore);
-                javax.net.ssl.SSLContext context = javax.net.ssl.SSLContext.getInstance(sslTrustStoreVersion);
+                SSLContext context = javax.net.ssl.SSLContext.getInstance(sslTrustStoreVersion);
                 context.init(null, trustManagerFactory.getTrustManagers(), null);
                 connectionOptions.setSocketFactory(context.getSocketFactory());
             }
@@ -117,27 +116,27 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
             }
 
             // Construct an MQTT blocking mode client
-            mqttClient = new org.eclipse.paho.client.mqttv3.MqttClient(this.mqttBrokerConnectionConfiguration.getBrokerUrl(), this.mqttClientId,
+            mqttClient = new MqttClient(this.mqttBrokerConnectionConfiguration.getBrokerUrl(), this.mqttClientId,
                                                                        dataStore);
 
             // Set this wrapper as the callback handler
             mqttClient.setCallback(this);
 
-        } catch (org.eclipse.paho.client.mqttv3.MqttException e) {
+        } catch (MqttException e) {
             log.error("Exception occurred while subscribing to MQTT broker at "
                               + mqttBrokerConnectionConfiguration.getBrokerUrl());
             throw new InputEventAdapterRuntimeException(e);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new InputEventAdapterRuntimeException
                     ("TrustStore File path is incorrect. Specify TrustStore location Correctly.", e);
-        } catch (java.security.cert.CertificateException e) {
+        } catch (CertificateException e) {
             throw new InputEventAdapterRuntimeException("TrustStore is not specified. So Security certificate" +
                                                                 " Exception happened.  ", e);
-        } catch (java.security.NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new InputEventAdapterRuntimeException("Algorithm is not available in KeyManagerFactory class.", e);
-        } catch (java.security.KeyStoreException e) {
+        } catch (KeyStoreException e) {
             throw new InputEventAdapterRuntimeException("Error in TrustStore Type", e);
-        } catch (java.security.KeyManagementException e) {
+        } catch (KeyManagementException e) {
             throw new InputEventAdapterRuntimeException("Error in Key Management", e);
         } finally {
             if (fileInputStream != null) {
@@ -146,7 +145,7 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
         }
     }
 
-    public void startListener() throws org.eclipse.paho.client.mqttv3.MqttException {
+    public void startListener() throws MqttException {
         // Connect to the MQTT server
         mqttClient.connect(connectionOptions);
 
@@ -167,7 +166,7 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
                     mqttClient.unsubscribe(topic);
                 }
                 mqttClient.disconnect(3000);
-            } catch (org.eclipse.paho.client.mqttv3.MqttException e) {
+            } catch (MqttException e) {
                 log.error("Can not unsubscribe from the destination " + topic
                                   + " with the event adapter " + adapterName, e);
             }
@@ -184,7 +183,7 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
     }
 
     @Override
-    public void messageArrived(String s, org.eclipse.paho.client.mqttv3.MqttMessage mqttMessage) throws Exception {
+    public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
         try {
             String msgText = mqttMessage.toString();
             if (log.isDebugEnabled()) {
@@ -206,7 +205,7 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
     }
 
     @Override
-    public void deliveryComplete(org.eclipse.paho.client.mqttv3.IMqttDeliveryToken iMqttDeliveryToken) {
+    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
     }
 
@@ -222,7 +221,7 @@ public class MQTTAdapterListener implements org.eclipse.paho.client.mqttv3.MqttC
                 log.info("MQTT Connection successful");
             } catch (InterruptedException e) {
                 log.error("Interruption occurred while waiting for reconnection", e);
-            } catch (org.eclipse.paho.client.mqttv3.MqttException e) {
+            } catch (MqttException e) {
                 log.error("MQTT Exception occurred when starting listener", e);
             }
 

@@ -36,17 +36,17 @@ import java.util.ResourceBundle;
  */
 public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
 
-    private java.util.ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle
-            ("org.wso2.carbon.event.input.adapter.mqtt.i18n.Resources", java.util.Locale.getDefault());
+    private java.util.ResourceBundle resourceBundle = ResourceBundle.getBundle
+            ("org.wso2.carbon.event.input.adapter.mqtt.i18n.Resources", Locale.getDefault());
 
     @Override
     public String getType() {
-        return org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_TYPE_MQTT;
+        return MQTTEventAdapterConstants.ADAPTER_TYPE_MQTT;
     }
 
     @Override
-    public java.util.List<String> getSupportedMessageFormats() {
-        java.util.List<String> supportInputMessageTypes = new java.util.ArrayList<String>();
+    public List<String> getSupportedMessageFormats() {
+        List<String> supportInputMessageTypes = new ArrayList<String>();
         supportInputMessageTypes.add(MessageType.TEXT);
         supportInputMessageTypes.add(MessageType.JSON);
         supportInputMessageTypes.add(MessageType.XML);
@@ -55,88 +55,66 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
     }
 
     @Override
-    public java.util.List<Property> getPropertyList() {
-        java.util.List<Property> propertyList = new java.util.ArrayList<org.wso2.carbon.event.input.adapter.core.Property>();
+    public List<Property> getPropertyList() {
+        List<Property> propertyList = new ArrayList<Property>();
 
         // set topic
-        Property topicProperty = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC);
-        topicProperty.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC));
+        Property topicProperty = new Property(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC);
+        topicProperty.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC));
         topicProperty.setRequired(true);
-        topicProperty.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC_HINT));
+        topicProperty.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC_HINT));
         propertyList.add(topicProperty);
 
         //Broker Url
-        Property brokerUrl = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_URL);
-        brokerUrl.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_URL));
+        Property brokerUrl = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_URL);
+        brokerUrl.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_URL));
         brokerUrl.setRequired(true);
-        brokerUrl.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_URL_HINT));
+        brokerUrl.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_URL_HINT));
         propertyList.add(brokerUrl);
 
         //Broker Username
-        Property userName = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME);
-        userName.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants
-                        .ADAPTER_CONF_USERNAME));
+        Property userName = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME);
+        userName.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants
+                                                                 .ADAPTER_CONF_USERNAME));
         userName.setRequired(false);
-        userName.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME_HINT));
+        userName.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME_HINT));
         propertyList.add(userName);
 
         //Broker Password
-        Property password = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD);
-        password.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants
-                        .ADAPTER_CONF_PASSWORD));
+        Property password = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD);
+        password.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD));
         password.setSecured(true);
         password.setEncrypted(true);
         password.setRequired(false);
-        password.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD_HINT));
+        password.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD_HINT));
         propertyList.add(password);
 
         //Broker SSL Connection
-        Property connectionSSLEnabled = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONNECTION_SSL_ENABLED);
-        connectionSSLEnabled.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants
+        Property connectionSSLEnabled = new Property(MQTTEventAdapterConstants.ADAPTER_CONNECTION_SSL_ENABLED);
+        connectionSSLEnabled.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants
                                                                              .ADAPTER_CONNECTION_SSL_ENABLED));
         connectionSSLEnabled.setRequired(false);
         connectionSSLEnabled.setOptions(new String[]{"true", "false"});
         connectionSSLEnabled.setDefaultValue("false");
-        connectionSSLEnabled.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants
+        connectionSSLEnabled.setHint(resourceBundle.getString(MQTTEventAdapterConstants
                                                                       .ADAPTER_CONNECTION_SSL_ENABLED_HINT));
         propertyList.add(connectionSSLEnabled);
 
         //Broker clear session
-        Property clearSession = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION);
+        Property clearSession = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION);
         clearSession.setDisplayName(
-                resourceBundle.getString(
-                        org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION));
+                resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION));
         clearSession.setRequired(false);
         clearSession.setOptions(new String[]{"true", "false"});
         clearSession.setDefaultValue("true");
-        clearSession.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION_HINT));
+        clearSession.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION_HINT));
         propertyList.add(clearSession);
 
         // set clientId
-        Property clientId = new Property(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID);
-        clientId.setDisplayName(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID));
+        Property clientId = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID);
+        clientId.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID));
         clientId.setRequired(false);
-        clientId.setHint(resourceBundle.getString(
-                org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID_HINT));
+        clientId.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID_HINT));
         propertyList.add(clientId);
 
         return propertyList;
@@ -150,7 +128,7 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
     @Override
     public InputEventAdapter createEventAdapter(
             InputEventAdapterConfiguration eventAdapterConfiguration,
-            java.util.Map<String, String> globalProperties) {
-        return new org.wso2.carbon.event.input.adapter.mqtt.MQTTEventAdapter(eventAdapterConfiguration, globalProperties);
+            Map<String, String> globalProperties) {
+        return new MQTTEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }

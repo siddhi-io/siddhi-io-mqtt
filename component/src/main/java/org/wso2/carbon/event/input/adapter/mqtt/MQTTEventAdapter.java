@@ -37,14 +37,14 @@ import java.util.UUID;
 public class MQTTEventAdapter implements InputEventAdapter {
 
     private final InputEventAdapterConfiguration eventAdapterConfiguration;
-    private final java.util.Map<String, String> globalProperties;
-    private final String id = java.util.UUID.randomUUID().toString();
+    private final Map<String, String> globalProperties;
+    private final String id = UUID.randomUUID().toString();
     private InputEventAdapterListener eventAdapterListener;
-    private org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTAdapterListener mqttAdapterListener;
-    private org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration;
+    private MQTTAdapterListener mqttAdapterListener;
+    private MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration;
 
     public MQTTEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
-                            java.util.Map<String, String> globalProperties) {
+                            Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
         this.globalProperties = globalProperties;
     }
@@ -56,34 +56,33 @@ public class MQTTEventAdapter implements InputEventAdapter {
             int keepAlive;
 
             //If global properties are available those will be assigned else constant values will be assigned
-            if (globalProperties.get(
-                    org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_KEEP_ALIVE) != null) {
-                keepAlive = Integer.parseInt((globalProperties.get(
-                        org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_KEEP_ALIVE)));
+            if (globalProperties.get(MQTTEventAdapterConstants.ADAPTER_CONF_KEEP_ALIVE) != null) {
+                keepAlive = Integer.parseInt((globalProperties.get(MQTTEventAdapterConstants.ADAPTER_CONF_KEEP_ALIVE)));
             } else {
-                keepAlive = org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_DEFAULT_KEEP_ALIVE;
+                keepAlive = MQTTEventAdapterConstants.ADAPTER_CONF_DEFAULT_KEEP_ALIVE;
             }
 
-            mqttBrokerConnectionConfiguration = new org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTBrokerConnectionConfiguration(
-                    eventAdapterConfiguration.getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_URL),
-                    eventAdapterConfiguration.getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants
-                                    .ADAPTER_CONF_USERNAME),
-                    eventAdapterConfiguration.getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD),
-                    eventAdapterConfiguration.getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLEAN_SESSION),
-                    eventAdapterConfiguration.getProperties()
-                            .get(org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONNECTION_SSL_ENABLED),
-                    String.valueOf(keepAlive));
+            mqttBrokerConnectionConfiguration =
+                    new MQTTBrokerConnectionConfiguration(eventAdapterConfiguration.getProperties().get(
+                            MQTTEventAdapterConstants.ADAPTER_CONF_URL),
+                                                          eventAdapterConfiguration.getProperties().get(
+                                                                  MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME),
+                                                          eventAdapterConfiguration.getProperties()
+                                                                  .get(MQTTEventAdapterConstants.ADAPTER_CONF_PASSWORD),
+                                                          eventAdapterConfiguration.getProperties()
+                                                                  .get(MQTTEventAdapterConstants
+                                                                               .ADAPTER_CONF_CLEAN_SESSION),
+                                                          eventAdapterConfiguration.getProperties()
+                                                                  .get(MQTTEventAdapterConstants
+                                                                               .ADAPTER_CONNECTION_SSL_ENABLED),
+                                                          String.valueOf(keepAlive));
 
-            mqttAdapterListener = new org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTAdapterListener(mqttBrokerConnectionConfiguration, eventAdapterConfiguration
-                    .getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC), eventAdapterConfiguration
-                    .getProperties().get(
-                            org.wso2.carbon.event.input.adapter.mqtt.internal.util.MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID), eventAdapterListener,
-                                                                                                                 PrivilegedCarbonContext.getThreadLocalCarbonContext().
+            mqttAdapterListener = new MQTTAdapterListener(mqttBrokerConnectionConfiguration, eventAdapterConfiguration
+                    .getProperties().get(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC), eventAdapterConfiguration
+                                                                  .getProperties()
+                                                                  .get(MQTTEventAdapterConstants.ADAPTER_CONF_CLIENTID),
+                                                          eventAdapterListener,
+                                                          PrivilegedCarbonContext.getThreadLocalCarbonContext().
                                                                   getTenantId());
         } catch (Throwable t) {
             throw new InputEventAdapterException(t.getMessage(), t);
@@ -116,10 +115,10 @@ public class MQTTEventAdapter implements InputEventAdapter {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof org.wso2.carbon.event.input.adapter.mqtt.MQTTEventAdapter)) {
+        if (!(o instanceof MQTTEventAdapter)) {
             return false;
         }
-        org.wso2.carbon.event.input.adapter.mqtt.MQTTEventAdapter that = (org.wso2.carbon.event.input.adapter.mqtt.MQTTEventAdapter) o;
+        MQTTEventAdapter that = (MQTTEventAdapter) o;
         if (!id.equals(that.id)) {
             return false;
         }
