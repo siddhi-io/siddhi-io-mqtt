@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -32,18 +32,28 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * The mqtt event adapter factory class to create a mqtt input adapter
+ * This class represents the properties we need to get from the UI configuration for define Receiver.
  */
 public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
 
-    private java.util.ResourceBundle resourceBundle = ResourceBundle.getBundle
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle
             ("org.wso2.carbon.event.input.adapter.mqtt.i18n.Resources", Locale.getDefault());
 
+    /**
+     * This method returns the receiver type as a String.
+     *
+     * @return Type of the Adapter
+     */
     @Override
     public String getType() {
         return MQTTEventAdapterConstants.ADAPTER_TYPE_MQTT;
     }
 
+    /**
+     * Specify supported message formats for the created receiver type.
+     *
+     * @return Supported Message Formats
+     */
     @Override
     public List<String> getSupportedMessageFormats() {
         List<String> supportInputMessageTypes = new ArrayList<String>();
@@ -54,9 +64,15 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
         return supportInputMessageTypes;
     }
 
+    /**
+     * Here the properties have to be defined for the receiver.
+     * When defining properties you can implement to configure property values from the management console.
+     *
+     * @return List of Properties
+     */
     @Override
     public List<Property> getPropertyList() {
-        List<Property> propertyList = new ArrayList<Property>();
+        List<Property> propertyList = new ArrayList<org.wso2.carbon.event.input.adapter.core.Property>();
 
         // set topic
         Property topicProperty = new Property(MQTTEventAdapterConstants.ADAPTER_MESSAGE_TOPIC);
@@ -74,8 +90,7 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
 
         //Broker Username
         Property userName = new Property(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME);
-        userName.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants
-                                                                 .ADAPTER_CONF_USERNAME));
+        userName.setDisplayName(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME));
         userName.setRequired(false);
         userName.setHint(resourceBundle.getString(MQTTEventAdapterConstants.ADAPTER_CONF_USERNAME_HINT));
         propertyList.add(userName);
@@ -120,15 +135,28 @@ public class MQTTEventAdapterFactory extends InputEventAdapterFactory {
         return propertyList;
     }
 
+    /**
+     * Specify any hints to be displayed in the management console.
+     *
+     * @return Usage Tips
+     */
     @Override
     public String getUsageTips() {
         return null;
     }
 
+    /**
+     * This method creates the receiver by specifying event adapter configuration
+     * and global properties which are common to every adapter type.
+     *
+     * @param eventAdapterConfiguration Configuration of Adapter
+     * @param globalProperties          Global properties from the map
+     * @return MQTTEventAdapter
+     */
     @Override
-    public InputEventAdapter createEventAdapter(
-            InputEventAdapterConfiguration eventAdapterConfiguration,
-            Map<String, String> globalProperties) {
+    public InputEventAdapter createEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                                                Map<String, String> globalProperties) {
         return new MQTTEventAdapter(eventAdapterConfiguration, globalProperties);
     }
 }
+

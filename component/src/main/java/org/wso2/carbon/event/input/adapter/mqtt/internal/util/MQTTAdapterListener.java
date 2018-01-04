@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 *  WSO2 Inc. licenses this file to you under the Apache License,
 *  Version 2.0 (the "License"); you may not use this file except
@@ -33,15 +33,20 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
 import org.wso2.carbon.event.input.adapter.core.exception.InputEventAdapterRuntimeException;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import java.security.cert.CertificateException;
-import java.security.NoSuchAlgorithmException;
-import java.security.KeyStoreException;
-import java.security.KeyManagementException;
 
+/**
+ * This is the listener which directly interacts with the external MQTT broker and making connection with MQTT
+ * broker and listen messages from Broker.
+ */
 public class MQTTAdapterListener implements MqttCallback, Runnable {
 
     private static final Log log = LogFactory.getLog(MQTTAdapterListener.class);
@@ -55,7 +60,7 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
     private String sslTrustStoreType;
     private String sslTrustStoreVersion;
     private String sslTrustStorePassword;
-    private java.io.FileInputStream fileInputStream;
+    private FileInputStream fileInputStream;
 
     private MQTTBrokerConnectionConfiguration mqttBrokerConnectionConfiguration;
     private String mqttClientId;
@@ -72,7 +77,6 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         if (mqttClientId == null || mqttClientId.trim().isEmpty()) {
             mqttClientId = MqttClient.generateClientId();
         }
-
         this.mqttClientId = mqttClientId;
         this.mqttBrokerConnectionConfiguration = mqttBrokerConnectionConfiguration;
         this.cleanSession = mqttBrokerConnectionConfiguration.isCleanSession();
@@ -85,7 +89,7 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         this.topic = topic;
         this.eventAdapterListener = inputEventAdapterListener;
         this.tenantId = tenantId;
-        //SORTING messages until the server fetches them
+        //Sorting messages until the server fetches them
         String temp_directory = System.getProperty("java.io.tmpdir");
         MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(temp_directory);
 
@@ -104,7 +108,7 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance
                         (TrustManagerFactory.getDefaultAlgorithm());
                 trustManagerFactory.init(keyStore);
-                SSLContext context = javax.net.ssl.SSLContext.getInstance(sslTrustStoreVersion);
+                SSLContext context = SSLContext.getInstance(sslTrustStoreVersion);
                 context.init(null, trustManagerFactory.getTrustManagers(), null);
                 connectionOptions.setSocketFactory(context.getSocketFactory());
             }
@@ -117,16 +121,15 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
 
             // Construct an MQTT blocking mode client
             mqttClient = new MqttClient(this.mqttBrokerConnectionConfiguration.getBrokerUrl(), this.mqttClientId,
-                                                                       dataStore);
+                                        dataStore);
 
             // Set this wrapper as the callback handler
             mqttClient.setCallback(this);
-
         } catch (MqttException e) {
             log.error("Exception occurred while subscribing to MQTT broker at "
                               + mqttBrokerConnectionConfiguration.getBrokerUrl());
             throw new InputEventAdapterRuntimeException(e);
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             throw new InputEventAdapterRuntimeException
                     ("TrustStore File path is incorrect. Specify TrustStore location Correctly.", e);
         } catch (CertificateException e) {
@@ -135,9 +138,12 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         } catch (NoSuchAlgorithmException e) {
             throw new InputEventAdapterRuntimeException("Algorithm is not available in KeyManagerFactory class.", e);
         } catch (KeyStoreException e) {
-            throw new InputEventAdapterRuntimeException("Error in TrustStore Type", e);
+            throw new InputEventAdapterRuntimeException("TrustStore Type is incorrect.Specify TrustStore type correctly"
+                    , e);
         } catch (KeyManagementException e) {
-            throw new InputEventAdapterRuntimeException("Error in Key Management", e);
+            throw new InputEventAdapterRuntimeException("The certificate is not valid or the public key in the" +
+                                                                "certificate being added conflicts with this " +
+                                                                "identity's public key,", e);
         } finally {
             if (fileInputStream != null) {
                 fileInputStream.close();
@@ -145,6 +151,13 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         }
     }
 
+    /**
+     * Used to start message consuming messages. This method is called in startup and when
+     * connection is re-connected. This method will request for the connection and Subscribe to the requested topic
+     * before consuming messages
+     *
+     * @throws MqttException
+     */
     public void startListener() throws MqttException {
         // Connect to the MQTT server
         mqttClient.connect(connectionOptions);
@@ -157,6 +170,11 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         mqttClient.subscribe(topic);
     }
 
+    /**
+     * disconnect the connection
+     *
+     * @param adapterName Name of the Adapter
+     */
     public void stopListener(String adapterName) {
         if (connectionSucceeded) {
             try {
@@ -166,15 +184,18 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
                     mqttClient.unsubscribe(topic);
                 }
                 mqttClient.disconnect(3000);
-            } catch (MqttException e) {
-                log.error("Can not unsubscribe from the destination " + topic
-                                  + " with the event adapter " + adapterName, e);
+            } catch (org.eclipse.paho.client.mqttv3.MqttException e) {
+                log.error("Can not unsubscribe from the destination " + topic+ "with the event adapter " +
+                        "adapterName", e);
             }
         }
         //This is to stop all running reconnection threads
         connectionSucceeded = true;
     }
 
+    /**
+     * This callback is invoked upon losing the MQTT connection.
+     */
     @Override
     public void connectionLost(Throwable throwable) {
         log.warn("MQTT connection not reachable " + throwable);
@@ -182,20 +203,22 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         new Thread(this).start();
     }
 
+    /**
+     * This callback is invoked when a message is received on a subscribed topic.
+     *
+     * @param s           topic
+     * @param mqttMessage message
+     * @throws Exception
+     */
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
         try {
             String msgText = mqttMessage.toString();
             if (log.isDebugEnabled()) {
-                log.debug(msgText);
+                log.debug("Event received in MQTT Event Adapter - " + msgText);
             }
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
-
-            if (log.isDebugEnabled()) {
-                log.debug("Event received in MQTT Event Adapter - " + msgText);
-            }
-
             eventAdapterListener.onEvent(msgText);
         } catch (InputEventAdapterRuntimeException e) {
             throw new InputEventAdapterRuntimeException(e);
@@ -204,11 +227,18 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         }
     }
 
+    /**
+     * This callback is invoked when a message published by this client
+     * is successfully received by the broker.
+     */
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
     }
 
+    /**
+     * Initialize the Adapter
+     */
     @Override
     public void run() {
         while (!connectionSucceeded) {
@@ -221,10 +251,9 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
                 log.info("MQTT Connection successful");
             } catch (InterruptedException e) {
                 log.error("Interruption occurred while waiting for reconnection", e);
-            } catch (MqttException e) {
+            } catch (org.eclipse.paho.client.mqttv3.MqttException e) {
                 log.error("MQTT Exception occurred when starting listener", e);
             }
-
         }
     }
 
@@ -232,3 +261,4 @@ public class MQTTAdapterListener implements MqttCallback, Runnable {
         new Thread(this).start();
     }
 }
+
