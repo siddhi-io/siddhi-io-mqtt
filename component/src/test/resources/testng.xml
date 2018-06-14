@@ -18,7 +18,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="MqttIoTestSuit" verbose="1">
-    <test name="MqttIoTest">
+    <test name="MqttIoTest" preserve-order="true">
         <classes>
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkMapTest" />
             <class name="org.wso2.extension.siddhi.io.mqtt.sink.MqttSinkQosTestCase" />

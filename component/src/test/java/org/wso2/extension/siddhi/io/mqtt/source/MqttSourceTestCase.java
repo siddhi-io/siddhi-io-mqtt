@@ -573,7 +573,7 @@ public class MqttSourceTestCase {
     }
 
     @Test
-    public void mqttReceiveEvents() {
+    public void mqttReceiveEvents() throws InterruptedException {
         LOG.info("Test for pause & resume");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -632,6 +632,7 @@ public class MqttSourceTestCase {
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
         }
+        SiddhiTestHelper.waitForEvents(100, 3, count, 2000);
         AssertJUnit.assertEquals(3, count.get());
         siddhiAppRuntimeSource.shutdown();
         siddhiAppRuntime.shutdown();

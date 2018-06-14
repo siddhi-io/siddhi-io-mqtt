@@ -22,6 +22,7 @@ import io.moquette.server.Server;
 import io.moquette.server.config.IConfig;
 import io.moquette.server.config.MemoryConfig;
 import org.apache.log4j.Logger;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -45,6 +46,7 @@ public class MqttSourceQosTest {
     private int timeout = 30000;
     private volatile boolean eventArrived;
     private static final Server mqttBroker = new Server();
+    boolean isLogEventArrived = false;
 
 
     @BeforeMethod
@@ -127,9 +129,10 @@ public class MqttSourceQosTest {
 
     }
 
-    @Test(expectedExceptions = {IllegalArgumentException.class})
-    public void mqttRecieveEventsWithInvalidQos() {
+    @Test
+    public void mqttRecieveEventsWithInvalidQos() throws InterruptedException {
         LOG.info("Test for Mqtt Recieve events with invalid QOS");
+        String regexPattern = "Error starting Siddhi App 'TestExecutionPlan2'";
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -142,7 +145,19 @@ public class MqttSourceQosTest {
                         "clean.session='true', keep.alive= '60',@map(type='xml'))" +
                         "Define stream FooStream2 (symbol string, price float, volume long);" +
                         "from FooStream2 select symbol, price, volume insert into BarStream2;");
+
+        LoggerCallback loggerCallback = new LoggerCallback(regexPattern) {
+            @Override
+            public void receive(String logEventMessage) {
+                isLogEventArrived = true;
+            }
+        };
+        LoggerAppender.setLoggerCallback(loggerCallback);
         siddhiAppRuntimeSource.start();
+        Thread.sleep(1000);
+        Assert.assertEquals(isLogEventArrived, true,
+                            "Matching log event not found for pattern: '" + regexPattern + "'");
+        LoggerAppender.setLoggerCallback(null);
         siddhiAppRuntimeSource.shutdown();
 
     }
