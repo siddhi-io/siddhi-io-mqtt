@@ -21,13 +21,15 @@ package org.wso2.extension.siddhi.io.mqtt.util;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
+/**
+ * Log appender to be used in uni tests.
+ */
 public class UnitTestAppender extends AppenderSkeleton {
 
     private String messages;
 
     @Override
     protected void append(LoggingEvent loggingEvent) {
-
         messages = loggingEvent.getRenderedMessage();
     }
 
@@ -38,12 +40,10 @@ public class UnitTestAppender extends AppenderSkeleton {
 
     @Override
     public boolean requiresLayout() {
-
         return false;
     }
 
     public String getMessages() {
-
         return messages;
     }
 }
