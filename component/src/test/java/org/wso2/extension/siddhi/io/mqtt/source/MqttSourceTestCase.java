@@ -47,7 +47,7 @@ public class MqttSourceTestCase {
     static final Logger LOG = Logger.getLogger(MqttSourceTestCase.class);
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
-    private int timeout = 30000;
+    private int timeout = 60000;
     private volatile boolean eventArrived;
     private static final Server mqttBroker = new Server();
 
@@ -616,6 +616,7 @@ public class MqttSourceTestCase {
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
         }
+        arrayList.clear();
         sources.forEach(e -> e.forEach(Source::resume));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[] { "IBM", 75.6f, 100L }));
         try {
