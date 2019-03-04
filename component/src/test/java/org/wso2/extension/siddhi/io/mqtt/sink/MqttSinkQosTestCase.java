@@ -27,9 +27,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.extension.siddhi.io.mqtt.util.UnitTestAppender;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
+import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
 import java.rmi.RemoteException;
@@ -38,7 +40,7 @@ import java.util.Properties;
 public class MqttSinkQosTestCase {
     private volatile int count;
     private volatile boolean eventArrived;
-    private static final Logger log = Logger.getLogger(MqttSinkQosTestCase.class);
+    private static Logger log = Logger.getLogger(MqttSinkQosTestCase.class);
     private static final Server mqttBroker = new Server();
     private MqttTestClient mqttTestClient;
 
@@ -94,7 +96,7 @@ public class MqttSinkQosTestCase {
             fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
             fooStream.send(new Object[]{"IBM", 75.6f, 100L});
             fooStream.send(new Object[]{"WSO2", 57.6f, 100L});
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
         }
@@ -108,9 +110,13 @@ public class MqttSinkQosTestCase {
         siddhiAppRuntime.shutdown();
     }
 
-    @Test(expectedExceptions = {IllegalArgumentException.class})
+    @Test
     public void mqttPublishEventsWithInvalidQos() {
         log.info("Test for Mqtt Publish events with invalid QOS");
+        log = Logger.getLogger(StreamJunction.class);
+        UnitTestAppender appender = new UnitTestAppender();
+        log.addAppender(appender);
+
         SiddhiManager siddhiManager = new SiddhiManager();
         ResultContainer resultContainer = new ResultContainer(1);
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(
@@ -133,10 +139,12 @@ public class MqttSinkQosTestCase {
         try {
             siddhiAppRuntime.start();
             fooStream.send(new Object[]{"WSO2", 55.6f, 100L});
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
         }
+        AssertJUnit.assertTrue(appender.getMessages().contains("Invalid QOS value received for MQTT Sink associated" +
+                " to stream 'BarStream' . Expected 0, 1 or 2 but received 3."));
         siddhiAppRuntime.shutdown();
     }
 }

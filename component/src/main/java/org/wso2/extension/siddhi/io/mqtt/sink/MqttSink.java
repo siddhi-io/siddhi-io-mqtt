@@ -24,6 +24,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.wso2.extension.siddhi.io.mqtt.sink.exception.MqttSinkRuntimeException;
 import org.wso2.extension.siddhi.io.mqtt.util.MqttConstants;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
@@ -220,7 +221,7 @@ public class MqttSink extends Sink {
         } catch (MqttException e) {
             throw new ConnectionUnavailableException(
                     "Error while connecting with the Mqtt server, Check the broker url = " + brokerURL +
-                            " defined in " + streamDefinition, e);
+                            " defined in " + streamDefinition.getId(), e);
         }
     }
 
@@ -255,18 +256,32 @@ public class MqttSink extends Sink {
                 byteArray = payload.toString().getBytes("UTF-8");
             }
             message.setPayload(byteArray);
-            int qos = Integer.parseInt(qosOption.getValue(dynamicOptions));
-            boolean messageRetain = Boolean.parseBoolean(messageRetainOption.getValue(dynamicOptions));
+
+            int qos;
+            String qosStr = qosOption.getValue(dynamicOptions);
+            try {
+                qos = Integer.parseInt(qosStr);
+            } catch (NumberFormatException e) {
+                throw new MqttSinkRuntimeException("Invalid QOS value received for MQTT Sink associated to stream '"
+                        + streamDefinition.getId() + "' . Expected 0, 1 or 2 but received " + qosStr, e);
+            }
+            if (qos < 0 || qos > 2) {
+                throw new MqttSinkRuntimeException("Invalid QOS value received for MQTT Sink associated to stream '"
+                        + streamDefinition.getId() + "' . Expected 0, 1 or 2 but received " + qos);
+            }
             message.setQos(qos);
+
+            boolean messageRetain = Boolean.parseBoolean(messageRetainOption.getValue(dynamicOptions));
             message.setRetained(messageRetain);
+
             String topic = topicOption.getValue(dynamicOptions);
             client.publish(topic, message);
         } catch (MqttException e) {
             log.error("Error occurred when publishing message to the MQTT broker: " + brokerURL + " in "
-                    + streamDefinition, e);
+                    + streamDefinition.getId(), e);
         } catch (UnsupportedEncodingException e) {
             log.error("Event could not be encoded in UTF-8, hence it could not be published to MQTT broker: "
-                    + brokerURL + " in " + streamDefinition, e);
+                    + brokerURL + " in " + streamDefinition.getId(), e);
         }
     }
 
