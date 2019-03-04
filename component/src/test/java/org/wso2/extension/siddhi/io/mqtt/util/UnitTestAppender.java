@@ -22,7 +22,7 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Log appender to be used in uni tests.
+ * Log appender to be used in unit tests.
  */
 public class UnitTestAppender extends AppenderSkeleton {
 
