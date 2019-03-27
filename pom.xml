@@ -24,7 +24,7 @@
     <packaging>pom</packaging>
     <groupId>org.wso2.extension.siddhi.io.mqtt</groupId>
     <artifactId>siddhi-io-mqtt-parent</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <name>Siddhi IO MQTT Extension Parent</name>
     <modules>
         <module>component</module>
@@ -163,6 +163,6 @@
         <url>https://github.com/wso2-extensions/siddhi-io-mqtt.git</url>
         <developerConnection>scm:git:https://github.com/wso2-extensions/siddhi-io-mqtt.git</developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/siddhi-io-mqtt.git</connection>
-        <tag>HEAD</tag>
+        <tag>v1.1.1</tag>
     </scm>
 </project>
