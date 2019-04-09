@@ -18,13 +18,13 @@
  */
 package org.wso2.extension.siddhi.io.mqtt.source;
 
+import io.siddhi.core.stream.input.source.SourceEventListener;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.wso2.siddhi.core.stream.input.source.SourceEventListener;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
