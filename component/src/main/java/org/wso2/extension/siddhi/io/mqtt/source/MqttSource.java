@@ -18,24 +18,25 @@
  */
 package org.wso2.extension.siddhi.io.mqtt.source;
 
+import io.siddhi.annotation.Example;
+import io.siddhi.annotation.Extension;
+import io.siddhi.annotation.Parameter;
+import io.siddhi.annotation.util.DataType;
+import io.siddhi.core.config.SiddhiAppContext;
+import io.siddhi.core.exception.ConnectionUnavailableException;
+import io.siddhi.core.stream.ServiceDeploymentInfo;
+import io.siddhi.core.stream.input.source.Source;
+import io.siddhi.core.stream.input.source.SourceEventListener;
+import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
+import io.siddhi.core.util.transport.OptionHolder;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.wso2.extension.siddhi.io.mqtt.util.MqttConstants;
-import org.wso2.siddhi.annotation.Example;
-import org.wso2.siddhi.annotation.Extension;
-import org.wso2.siddhi.annotation.Parameter;
-import org.wso2.siddhi.annotation.util.DataType;
-import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
-import org.wso2.siddhi.core.stream.input.source.Source;
-import org.wso2.siddhi.core.stream.input.source.SourceEventListener;
-import org.wso2.siddhi.core.util.config.ConfigReader;
-import org.wso2.siddhi.core.util.transport.OptionHolder;
-
-import java.util.Map;
 
 /**
  * {@code MqttSource } Handle the Mqtt receiving tasks.
@@ -155,10 +156,9 @@ public class MqttSource extends Source {
     private MqttConsumer mqttConsumer;
     private String siddhiAppName;
 
-
     @Override
-    public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder, String[] strings,
-                     ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
+    public StateFactory init(SourceEventListener sourceEventListener, OptionHolder optionHolder, String[] strings,
+                             ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
         siddhiAppName = siddhiAppContext.getName();
         this.brokerURL = optionHolder.validateAndGetStaticValue(MqttConstants.MQTT_BROKER_URL);
         this.clientId = optionHolder.validateAndGetStaticValue(MqttConstants.CLIENT_ID,
@@ -178,6 +178,7 @@ public class MqttSource extends Source {
         this.cleanSession = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue
                 (MqttConstants.CLEAN_SESSION, MqttConstants.DEFAULT_CLEAN_SESSION));
         this.mqttConsumer = new MqttConsumer(sourceEventListener);
+        return null;
     }
 
     @Override
@@ -185,7 +186,7 @@ public class MqttSource extends Source {
         return new Class[]{String.class};
     }
 
-    public void connect(ConnectionCallback connectionCallback) throws ConnectionUnavailableException {
+    public void connect(ConnectionCallback connectionCallback, State state) throws ConnectionUnavailableException {
         try {
             MqttDefaultFilePersistence persistence = new MqttDefaultFilePersistence();
             if (clientId.equals(MqttConstants.EMPTY_STRING)) {
@@ -207,6 +208,11 @@ public class MqttSource extends Source {
                             " defined in Siddhi App: " +
                            siddhiAppName , e);
         }
+    }
+
+    @Override
+    protected ServiceDeploymentInfo exposeServiceDeploymentInfo() {
+        return null;
     }
 
     public void disconnect() {
@@ -241,14 +247,6 @@ public class MqttSource extends Source {
 
     public void resume() {
         mqttConsumer.resume();
-
-    }
-
-    public Map<String, Object> currentState() {
-        return null;
-    }
-
-    public void restoreState(Map<String, Object> map) {
 
     }
 }

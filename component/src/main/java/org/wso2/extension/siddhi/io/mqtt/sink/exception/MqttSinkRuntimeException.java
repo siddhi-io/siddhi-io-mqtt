@@ -18,7 +18,7 @@
 
 package org.wso2.extension.siddhi.io.mqtt.sink.exception;
 
-import org.wso2.siddhi.core.exception.SiddhiAppRuntimeException;
+import io.siddhi.core.exception.SiddhiAppRuntimeException;
 
 /**
  * The exception to be thrown when a runtime error occurs in {@link org.wso2.extension.siddhi.io.mqtt.sink.MqttSink}

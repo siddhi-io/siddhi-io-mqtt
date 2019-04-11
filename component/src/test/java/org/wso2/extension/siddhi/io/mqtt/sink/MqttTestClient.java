@@ -19,6 +19,7 @@
 
 package org.wso2.extension.siddhi.io.mqtt.sink;
 
+import io.siddhi.core.exception.ConnectionUnavailableException;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -27,7 +28,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 
 public class MqttTestClient {
     private static final Logger log = Logger.getLogger(MqttTestClient.class);
