@@ -24,8 +24,11 @@ import io.siddhi.annotation.Parameter;
 import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
 import io.siddhi.core.exception.ConnectionUnavailableException;
+import io.siddhi.core.stream.ServiceDeploymentInfo;
 import io.siddhi.core.stream.output.sink.Sink;
 import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.Option;
 import io.siddhi.core.util.transport.OptionHolder;
@@ -40,7 +43,6 @@ import org.wso2.extension.siddhi.io.mqtt.sink.exception.MqttSinkRuntimeException
 import org.wso2.extension.siddhi.io.mqtt.util.MqttConstants;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 /**
  * {@code MqttSink } Handle the Mqtt publishing tasks.
@@ -167,8 +169,8 @@ public class MqttSink extends Sink {
     private StreamDefinition streamDefinition;
 
     @Override
-    protected void init(StreamDefinition streamDefinition, OptionHolder optionHolder, ConfigReader configReader,
-                        SiddhiAppContext siddhiAppContext) {
+    protected StateFactory init(StreamDefinition streamDefinition, OptionHolder optionHolder, ConfigReader configReader,
+                                SiddhiAppContext siddhiAppContext) {
         this.streamDefinition = streamDefinition;
         this.brokerURL = optionHolder.validateAndGetStaticValue(MqttConstants.MQTT_BROKER_URL);
         this.clientId = optionHolder.validateAndGetStaticValue(MqttConstants.CLIENT_ID,
@@ -189,11 +191,17 @@ public class MqttSink extends Sink {
                 MqttConstants.DEFAULT_MESSAGE_RETAIN);
         this.cleanSession = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue
                     (MqttConstants.CLEAN_SESSION, MqttConstants.DEFAULT_CLEAN_SESSION));
+        return null;
     }
 
     @Override
     public Class[] getSupportedInputEventClasses() {
         return new Class[]{Byte[].class, String.class};
+    }
+
+    @Override
+    protected ServiceDeploymentInfo exposedServiceDeploymentInfo() {
+        return null;
     }
 
     @Override
@@ -246,7 +254,8 @@ public class MqttSink extends Sink {
 
     }
 
-    public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
+    public void publish(Object payload, DynamicOptions dynamicOptions, State state)
+            throws ConnectionUnavailableException {
         try {
             MqttMessage message = new MqttMessage();
             byte[] byteArray;
@@ -283,16 +292,6 @@ public class MqttSink extends Sink {
             log.error("Event could not be encoded in UTF-8, hence it could not be published to MQTT broker: "
                     + brokerURL + " in " + streamDefinition.getId(), e);
         }
-    }
-
-
-    public Map<String, Object> currentState() {
-        return null;
-    }
-
-
-    public void restoreState(Map<String, Object> map) {
-
     }
 }
 
