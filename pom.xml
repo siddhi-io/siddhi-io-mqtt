@@ -22,9 +22,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <groupId>org.wso2.extension.siddhi.io.mqtt</groupId>
+    <groupId>io.siddhi.extension.io.mqtt</groupId>
     <artifactId>siddhi-io-mqtt-parent</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>Siddhi IO MQTT Extension Parent</name>
     <modules>
         <module>component</module>
@@ -68,19 +68,19 @@
                 <version>${moquette.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.extension.siddhi.map.binary</groupId>
+                <groupId>io.siddhi.extension.map.binary</groupId>
                 <artifactId>siddhi-map-binary</artifactId>
                 <version>${siddhi.map.binary.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.wso2.extension.siddhi.map.xml</groupId>
+                <groupId>io.siddhi.extension.map.xml</groupId>
                 <artifactId>siddhi-map-xml</artifactId>
                 <version>${xml.mapper.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.wso2.extension.siddhi.map.json</groupId>
+                <groupId>io.siddhi.extension.map.json</groupId>
                 <artifactId>siddhi-map-json</artifactId>
                 <version>${json.mapper.version}</version>
                 <scope>test</scope>
@@ -88,15 +88,15 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <siddhi.version>5.0.0-m11</siddhi.version>
+        <siddhi.version>5.1.2</siddhi.version>
         <siddhi.version.range>[5.0.0,6.0.0)</siddhi.version.range>
         <paho.mqtt.version>1.1.1</paho.mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
-        <siddhi.map.binary.version>2.0.0</siddhi.map.binary.version>
+        <siddhi.map.binary.version>2.0.2</siddhi.map.binary.version>
         <moquette.version>0.8</moquette.version>
         <log4j.version>1.2.17.wso2v1</log4j.version>
-        <json.mapper.version>5.0.1</json.mapper.version>
-        <xml.mapper.version>5.0.0</xml.mapper.version>
+        <json.mapper.version>5.0.4</json.mapper.version>
+        <xml.mapper.version>5.0.3</xml.mapper.version>
         <jacoco.plugin.version>0.7.9</jacoco.plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -160,9 +160,9 @@
     </repositories>
 
     <scm>
-        <url>https://github.com/wso2-extensions/siddhi-io-mqtt.git</url>
-        <developerConnection>scm:git:https://github.com/wso2-extensions/siddhi-io-mqtt.git</developerConnection>
-        <connection>scm:git:https://github.com/wso2-extensions/siddhi-io-mqtt.git</connection>
+        <url>https://github.com/siddhi-io/siddhi-io-mqtt.git</url>
+        <developerConnection>scm:git:https://github.com/siddhi-io/siddhi-io-mqtt.git</developerConnection>
+        <connection>scm:git:https://github.com/siddhi-io/siddhi-io-mqtt.git</connection>
         <tag>HEAD</tag>
     </scm>
 </project>
