@@ -10,11 +10,7 @@ Siddhi IO MQTT
   
 The **siddhi-io-mqtt** is an extension to <a target="_blank" href="https://wso2.github.io/siddhi">Siddhi</a> mqtt source and sink implementation,that publish and receive events from mqtt broker.
 
-Find some useful links below:
-
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt">Source code</a>
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt/releases">Releases</a>
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt/issues">Issue tracker</a>
+For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and it's features refer <a target="_blank" href="https://siddhi.io/redirect/docs.html">Siddhi Documentation</a>. 
 
 ## Downloads
 * Versions 3.x and above with group id `io.siddhi.extension.*` from <a target="_blank" href="https://mvnrepository.com/artifact/io.siddhi.extension.io.mqtt/siddhi-io-mqtt/">here</a>.
@@ -42,4 +38,3 @@ For installing this extension on various siddhi execution environments refer Sid
 * We encourage users to ask questions and get support via <a target="_blank" href="https://stackoverflow.com/questions/tagged/siddhi">StackOverflow</a>, make sure to add the `siddhi` tag to the issue for better response.
 * If you find any issues related to the extension please report them on <a target="_blank" href="https://github.com/siddhi-io/siddhi-execution-string/issues">the issue tracker</a>.
 * For production support and other contribution related information refer <a target="_blank" href="https://siddhi.io/community/">Siddhi Community</a> documentation. 
-
