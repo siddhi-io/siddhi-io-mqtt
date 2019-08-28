@@ -12,9 +12,9 @@ The **siddhi-io-mqtt** is an extension to <a target="_blank" href="https://wso2.
 
 Find some useful links below:
 
-* <a target="_blank" href="https://github.com/wso2-extensions/siddhi-io-mqtt">Source code</a>
-* <a target="_blank" href="https://github.com/wso2-extensions/siddhi-io-mqtt/releases">Releases</a>
-* <a target="_blank" href="https://github.com/wso2-extensions/siddhi-io-mqtt/issues">Issue tracker</a>
+* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt">Source code</a>
+* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt/releases">Releases</a>
+* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-mqtt/issues">Issue tracker</a>
 
 ## Downloads
 * Versions 3.x and above with group id `io.siddhi.extension.*` from <a target="_blank" href="https://mvnrepository.com/artifact/io.siddhi.extension.io.mqtt/siddhi-io-mqtt/">here</a>.
@@ -22,12 +22,12 @@ Find some useful links below:
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/2.0.0">2.0.0</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/2.0.0">2.0.0</a>.
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/2.0.0/#mqtt-sink">mqtt</a> *<a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#sink">(Sink)</a>*<br><div style="padding-left: 1em;"><p>The MQTT sink publishes the events to an MQTT broker </p></div>
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-mqtt/api/2.0.0/#mqtt-source">mqtt</a> *<a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#source">(Source)</a>*<br><div style="padding-left: 1em;"><p>The MQTT source receives the events from an MQTT broker </p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/2.0.0/#mqtt-sink">mqtt</a> *<a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#sink">(Sink)</a>*<br><div style="padding-left: 1em;"><p>The MQTT sink publishes the events to an MQTT broker </p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/2.0.0/#mqtt-source">mqtt</a> *<a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#source">(Source)</a>*<br><div style="padding-left: 1em;"><p>The MQTT source receives the events from an MQTT broker </p></div>
 
 ## Dependencies
 
