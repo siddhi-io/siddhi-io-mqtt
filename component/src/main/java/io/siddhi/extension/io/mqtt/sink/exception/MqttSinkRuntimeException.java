@@ -20,7 +20,7 @@ package io.siddhi.extension.io.mqtt.sink.exception;
 
 import io.siddhi.core.exception.SiddhiAppRuntimeException;
 /**
- * The exception to be thrown when a runtime error occurs in {@link MqttSink}
+ * The exception to be thrown when a runtime error occurs in {@link io.siddhi.extension.io.mqtt.sink.MqttSink}
  */
 public class MqttSinkRuntimeException extends SiddhiAppRuntimeException {
 
