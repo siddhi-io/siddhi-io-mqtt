@@ -35,7 +35,8 @@ import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.mqtt.sink.exception.MqttSinkRuntimeException;
 import io.siddhi.extension.io.mqtt.util.MqttConstants;
 import io.siddhi.query.api.definition.StreamDefinition;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -153,7 +154,7 @@ import java.io.UnsupportedEncodingException;
 
 
 public class MqttSink extends Sink {
-    private static final Logger log = Logger.getLogger(MqttSink.class);
+    private static final Logger log = LogManager.getLogger(MqttSink.class);
 
     private String brokerURL;
     private Option topicOption;

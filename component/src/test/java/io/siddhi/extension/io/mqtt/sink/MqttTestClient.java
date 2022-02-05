@@ -20,7 +20,8 @@
 package io.siddhi.extension.io.mqtt.sink;
 
 import io.siddhi.core.exception.ConnectionUnavailableException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -30,7 +31,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MqttTestClient {
-    private static final Logger log = Logger.getLogger(MqttTestClient.class);
+    private static final Logger log = LogManager.getLogger(MqttTestClient.class);
     private MemoryPersistence persistence;
     private MqttClient client = null;
     private MqttConnectOptions connectionOptions = null;

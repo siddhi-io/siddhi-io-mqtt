@@ -27,8 +27,9 @@ import io.siddhi.core.event.Event;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.SiddhiTestHelper;
-import org.apache.log4j.Logger;
-import org.testng.Assert;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +41,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MqttSourceQosTest {
-    static final Logger LOG = Logger.getLogger(MqttSourceQosTest.class);
+    private static final Logger LOG = (Logger) LogManager.getLogger(MqttSourceQosTest.class);
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
     private int timeout = 30000;
@@ -133,6 +134,12 @@ public class MqttSourceQosTest {
     public void mqttRecieveEventsWithInvalidQos() throws InterruptedException {
         LOG.info("Test for Mqtt Recieve events with invalid QOS");
         String regexPattern = "Error starting Siddhi App 'TestExecutionPlan2'";
+        LoggerAppender appender = new LoggerAppender("LoggerAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
+
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntimeSource = siddhiManager.createSiddhiAppRuntime(
                 "@App:name('TestExecutionPlan2') " +
@@ -145,19 +152,10 @@ public class MqttSourceQosTest {
                         "clean.session='true', keep.alive= '60',@map(type='xml'))" +
                         "Define stream FooStream2 (symbol string, price float, volume long);" +
                         "from FooStream2 select symbol, price, volume insert into BarStream2;");
-
-        LoggerCallback loggerCallback = new LoggerCallback(regexPattern) {
-            @Override
-            public void receive(String logEventMessage) {
-                isLogEventArrived = true;
-            }
-        };
-        LoggerAppender.setLoggerCallback(loggerCallback);
         siddhiAppRuntimeSource.start();
         Thread.sleep(1000);
-        Assert.assertEquals(isLogEventArrived, true,
-                            "Matching log event not found for pattern: '" + regexPattern + "'");
-        LoggerAppender.setLoggerCallback(null);
+        AssertJUnit.assertTrue(((LoggerAppender) logger.getAppenders().
+                get("LoggerAppender")).getMessages().contains(regexPattern));
         siddhiAppRuntimeSource.shutdown();
 
     }

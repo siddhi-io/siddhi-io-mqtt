@@ -32,7 +32,8 @@ import io.siddhi.core.util.snapshot.state.State;
 import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.mqtt.util.MqttConstants;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -141,7 +142,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 )
 
 public class MqttSource extends Source {
-    private static final Logger log = Logger.getLogger(MqttSource.class);
+    private static final Logger log = LogManager.getLogger(MqttSource.class);
 
     private String brokerURL;
     private String topicOption;

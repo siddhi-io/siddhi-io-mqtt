@@ -17,8 +17,8 @@
  */
 package io.siddhi.extension.io.mqtt.sink;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.UnsupportedEncodingException;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * Class to retain results received by Mqtt client.
  */
 public class ResultContainer {
-    private static Log log = LogFactory.getLog(ResultContainer.class);
+    private static final Logger log = LogManager.getLogger(ResultContainer.class);
     private int eventCount;
     private List<String> results;
     private CountDownLatch latch;

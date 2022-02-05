@@ -29,7 +29,8 @@ import io.siddhi.core.stream.input.source.Source;
 import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.SiddhiTestHelper;
 import io.siddhi.query.api.exception.SiddhiAppValidationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -44,7 +45,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MqttSourceTestCase {
-    static final Logger LOG = Logger.getLogger(MqttSourceTestCase.class);
+    private static final Logger LOG = LogManager.getLogger(MqttSourceTestCase.class);
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
     private int timeout = 60000;

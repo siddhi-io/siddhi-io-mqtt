@@ -24,10 +24,11 @@ import io.moquette.server.config.MemoryConfig;
 import io.siddhi.core.SiddhiAppRuntime;
 import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.exception.ConnectionUnavailableException;
-import io.siddhi.core.stream.StreamJunction;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.extension.io.mqtt.util.UnitTestAppender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +41,7 @@ import java.util.Properties;
 public class MqttSinkQosTestCase {
     private volatile int count;
     private volatile boolean eventArrived;
-    private static Logger log = Logger.getLogger(MqttSinkQosTestCase.class);
+    private static final Logger log = (Logger) LogManager.getLogger(MqttSinkQosTestCase.class);
     private static final Server mqttBroker = new Server();
     private MqttTestClient mqttTestClient;
 
@@ -112,10 +113,14 @@ public class MqttSinkQosTestCase {
 
     @Test
     public void mqttPublishEventsWithInvalidQos() {
+
+        UnitTestAppender appender = new UnitTestAppender("UnitTestAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
+
         log.info("Test for Mqtt Publish events with invalid QOS");
-        log = Logger.getLogger(StreamJunction.class);
-        UnitTestAppender appender = new UnitTestAppender();
-        log.addAppender(appender);
 
         SiddhiManager siddhiManager = new SiddhiManager();
         ResultContainer resultContainer = new ResultContainer(1);
@@ -143,8 +148,10 @@ public class MqttSinkQosTestCase {
         } catch (InterruptedException e) {
             AssertJUnit.fail("Thread sleep was interrupted");
         }
-        AssertJUnit.assertTrue(appender.getMessages().contains("Invalid QOS value received for MQTT Sink associated" +
+        AssertJUnit.assertTrue(((UnitTestAppender) logger.getAppenders().
+                get("UnitTestAppender")).getMessages().contains("Invalid QOS value received for MQTT Sink associated" +
                 " to stream 'BarStream' . Expected 0, 1 or 2 but received 3."));
         siddhiAppRuntime.shutdown();
+        logger.removeAppender(appender);
     }
 }

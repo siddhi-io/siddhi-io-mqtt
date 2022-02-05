@@ -27,7 +27,8 @@ import io.siddhi.core.event.Event;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.SiddhiTestHelper;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MqttSourceMapTest {
-    static final Logger LOG = Logger.getLogger(MqttSourceMapTest.class);
+    private static final Logger LOG = LogManager.getLogger(MqttSourceMapTest.class);
     private static final Server mqttBroker = new Server();
     private AtomicInteger count = new AtomicInteger(0);
     private int waitTime = 50;
