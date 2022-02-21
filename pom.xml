@@ -53,50 +53,103 @@
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.log4j.wso2</groupId>
-                <artifactId>log4j</artifactId>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.jms</groupId>
+                        <artifactId>jms</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jdmk</groupId>
+                        <artifactId>jmxtools</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jmx</groupId>
+                        <artifactId>jmxri</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
                 <version>${paho.mqtt.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.moquette</groupId>
                 <artifactId>moquette-broker</artifactId>
                 <version>${moquette.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.siddhi.extension.map.binary</groupId>
                 <artifactId>siddhi-map-binary</artifactId>
                 <version>${siddhi.map.binary.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.siddhi.extension.map.xml</groupId>
                 <artifactId>siddhi-map-xml</artifactId>
                 <version>${xml.mapper.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.siddhi.extension.map.json</groupId>
                 <artifactId>siddhi-map-json</artifactId>
                 <version>${json.mapper.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
-        <siddhi.version>5.1.13</siddhi.version>
+        <siddhi.version>5.1.21</siddhi.version>
         <siddhi.version.range>[5.0.0,6.0.0)</siddhi.version.range>
         <paho.mqtt.version>1.2.1</paho.mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
-        <siddhi.map.binary.version>2.0.2</siddhi.map.binary.version>
+        <siddhi.map.binary.version>2.1.1</siddhi.map.binary.version>
         <moquette.version>0.12</moquette.version>
-        <log4j.version>1.2.17.wso2v1</log4j.version>
-        <json.mapper.version>5.0.6</json.mapper.version>
-        <xml.mapper.version>5.0.4</xml.mapper.version>
+        <log4j.version>2.17.1</log4j.version>
+        <json.mapper.version>5.2.2</json.mapper.version>
+        <xml.mapper.version>5.2.2</xml.mapper.version>
         <jacoco.plugin.version>0.7.9</jacoco.plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
