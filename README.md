@@ -18,12 +18,12 @@ For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and i
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.1">3.0.1</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.2">3.0.2</a>.
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.1/#mqtt-sink">mqtt</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">The MQTT sink publishes the events to an MQTT broker </p></p></div>
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.1/#mqtt-source">mqtt</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#source">Source</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">The MQTT source receives the events from an MQTT broker </p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.2/#mqtt-sink">mqtt</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">The MQTT sink publishes the events to an MQTT broker </p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-mqtt/api/3.0.2/#mqtt-source">mqtt</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#source">Source</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">The MQTT source receives the events from an MQTT broker </p></p></div>
 
 ## Dependencies
 
