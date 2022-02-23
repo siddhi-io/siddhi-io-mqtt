@@ -24,7 +24,7 @@
     <packaging>pom</packaging>
     <groupId>io.siddhi.extension.io.mqtt</groupId>
     <artifactId>siddhi-io-mqtt-parent</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3-SNAPSHOT</version>
     <name>Siddhi IO MQTT Extension Parent</name>
     <modules>
         <module>component</module>
@@ -212,6 +212,6 @@
         <url>https://github.com/siddhi-io/siddhi-io-mqtt.git</url>
         <developerConnection>scm:git:https://github.com/siddhi-io/siddhi-io-mqtt.git</developerConnection>
         <connection>scm:git:https://github.com/siddhi-io/siddhi-io-mqtt.git</connection>
-        <tag>v3.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
