@@ -104,7 +104,7 @@
         <dependency>
             <groupId>io.moquette</groupId>
             <artifactId>moquette-broker</artifactId>
-            <version>0.8</version>
+            <version>${moquette.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
