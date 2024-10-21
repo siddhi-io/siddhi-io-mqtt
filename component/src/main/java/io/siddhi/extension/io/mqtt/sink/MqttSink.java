@@ -135,8 +135,31 @@ import java.io.UnsupportedEncodingException;
                                 "to connect to the MQTT broker. Once this time interval elapses, a timeout takes " +
                                 "place.",
                         type = {DataType.INT},
-                        optional = true, defaultValue = "30")
-
+                        optional = true, defaultValue = "30"),
+                @Parameter(
+                        name = "max.inflight",
+                        description = "The maximum number of messages the MQTT client can send without receiving " +
+                            "acknowledgments. The default value is 10",
+                        type = {DataType.INT},
+                        optional = true, defaultValue = "10"),
+                @Parameter(
+                        name = "automatic.reconnect",
+                        description = "This is an optional parameter. If set to true, in the event that the " +
+                                "connection is lost, the client will attempt to reconnect to the server. It will " +
+                                "initially wait 1 second before it attempts to reconnect, for every failed reconnect " +
+                                "attempt, the delay will double until it is at 2 minutes at which point the delay "  +
+                                "will stay at 2 minutes. " +
+                                "If set to false, the client will not attempt to automatically reconnect to the " +
+                                "server in the event that the connection is lost. " +
+                                "The default value is `false`.",
+                        type = {DataType.BOOL},
+                        optional = true, defaultValue = "false"),
+                @Parameter(
+                        name = "max.reconnect.delay",
+                        description = "The maximum number of milliseconds the client could wait after the connection " +
+                                "is lost. The default value is 128000",
+                        type = {DataType.INT},
+                        optional = true, defaultValue = "128000")
         },
         examples =
                 {
@@ -144,6 +167,7 @@ import java.io.UnsupportedEncodingException;
                                 syntax = "@sink(type='mqtt', url= 'tcp://localhost:1883', " +
                                         "topic='mqtt_topic', clean.session='true', message.retain='false', " +
                                         "quality.of.service= '1', keep.alive= '60',connection.timeout='30'" +
+                                        "max.inflight='20' ,automatic.reconnect='true', max.reconnect.delay='64000'," +
                                         "@map(type='xml'))" +
                                         "Define stream BarStream (symbol string, price float, volume long);",
                                 description = "This query publishes events to a stream named `BarStream` via the " +
@@ -165,6 +189,9 @@ public class MqttSink extends Sink {
     private boolean cleanSession;
     private int keepAlive;
     private int connectionTimeout;
+    private int maxInflight;
+    private boolean automaticReconnect;
+    private int maxReconnectDelay;
     private MqttClient client;
     private Option messageRetainOption;
     private StreamDefinition streamDefinition;
@@ -192,6 +219,14 @@ public class MqttSink extends Sink {
                 MqttConstants.DEFAULT_MESSAGE_RETAIN);
         this.cleanSession = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue
                     (MqttConstants.CLEAN_SESSION, MqttConstants.DEFAULT_CLEAN_SESSION));
+        this.maxInflight = Integer.parseInt(optionHolder.validateAndGetStaticValue
+                (MqttConstants.MAX_INFLIGHT,
+                        MqttConstants.DEFAULT_MAX_INFLIGHT));
+        this.automaticReconnect = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue
+                (MqttConstants.AUTOMATIC_RECONNECT, MqttConstants.DEFAULT_AUTOMATIC_RECONNECT));
+        this.maxReconnectDelay = Integer.parseInt(optionHolder.validateAndGetStaticValue
+                (MqttConstants.MAX_RECONNECT_DELAY,
+                        MqttConstants.DEFAULT_MAX_RECONNECT_DELAY));
         return null;
     }
 
@@ -225,6 +260,9 @@ public class MqttSink extends Sink {
             connectionOptions.setCleanSession(cleanSession);
             connectionOptions.setKeepAliveInterval(keepAlive);
             connectionOptions.setConnectionTimeout(connectionTimeout);
+            connectionOptions.setMaxInflight(maxInflight);
+            connectionOptions.setAutomaticReconnect(automaticReconnect);
+            connectionOptions.setMaxReconnectDelay(maxReconnectDelay);
             client.connect(connectionOptions);
 
         } catch (MqttException e) {
