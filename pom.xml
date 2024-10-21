@@ -146,7 +146,7 @@
         <paho.mqtt.version>1.2.1</paho.mqtt.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <siddhi.map.binary.version>2.1.1</siddhi.map.binary.version>
-        <moquette.version>0.12</moquette.version>
+        <moquette.version>0.15</moquette.version>
         <log4j.version>2.17.1</log4j.version>
         <json.mapper.version>5.2.2</json.mapper.version>
         <xml.mapper.version>5.2.2</xml.mapper.version>
