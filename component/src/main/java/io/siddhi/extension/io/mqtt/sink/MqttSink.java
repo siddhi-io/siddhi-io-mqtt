@@ -238,14 +238,14 @@ public class MqttSink extends Sink {
     public void disconnect() {
         try {
             client.disconnect();
-            log.debug("Disconnected from MQTT broker: " + brokerURL);
+            log.debug("Disconnected from MQTT broker: {}", brokerURL);
         } catch (MqttException e) {
-            log.error("Could not disconnect from MQTT broker: " + brokerURL, e);
+            log.error("Could not disconnect from MQTT broker: {}", brokerURL, e);
         } finally {
             try {
                 client.close();
             } catch (MqttException e) {
-                log.error("Could not close connection with MQTT broker: " + brokerURL, e);
+                log.error("Could not close connection with MQTT broker: {}", brokerURL, e);
             }
         }
     }
@@ -287,11 +287,11 @@ public class MqttSink extends Sink {
             String topic = topicOption.getValue(dynamicOptions);
             client.publish(topic, message);
         } catch (MqttException e) {
-            log.error("Error occurred when publishing message to the MQTT broker: " + brokerURL + " in "
-                    + streamDefinition.getId(), e);
+            log.error("Error occurred when publishing message to the MQTT broker: {} in {}", brokerURL,
+                    streamDefinition.getId(), e);
         } catch (UnsupportedEncodingException e) {
-            log.error("Event could not be encoded in UTF-8, hence it could not be published to MQTT broker: "
-                    + brokerURL + " in " + streamDefinition.getId(), e);
+            log.error("Event could not be encoded in UTF-8, hence it could not be published to MQTT broker: " +
+                    "{} in {}", brokerURL, streamDefinition.getId(), e);
         }
     }
 }
