@@ -153,6 +153,7 @@
         <jacoco.plugin.version>0.7.9</jacoco.plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.scm.id>scm-server</project.scm.id>
     </properties>
     <build>
         <!--suppress MavenDuplicatePluginInspection -->
