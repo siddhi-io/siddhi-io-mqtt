@@ -140,30 +140,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven.dependency.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>unpack-dependency</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eclipse.paho</groupId>
-                                    <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-                                    <version>${paho.mqtt.version}</version>
-                                    <outputDirectory>${project.build.directory}/dependency</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <suiteXmlFiles>
@@ -193,13 +169,10 @@
                             *;resolution:=optional
                         </Import-Package>
                         <Include-Resource>
-                            META-INF=target/classes/META-INF
+                            META-INF=target/classes/META-INF,
+                            {maven-resources}
                         </Include-Resource>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Include-Resource>
-                            META-INF/services/org.eclipse.paho.client.mqttv3.spi.NetworkModuleFactory=
-                            ${project.build.directory}/dependency/META-INF/services/org.eclipse.paho.client.mqttv3.spi.NetworkModuleFactory
-                        </Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>
