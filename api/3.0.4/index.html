@@ -38,7 +38,7 @@
     
     
       
-        <title>1.0.14 - Siddhi IO MQTT</title>
+        <title>3.0.4 - Siddhi IO MQTT</title>
       
     
     
@@ -114,7 +114,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#api-docs-v1014" tabindex="1" class="md-skip">
+      <a href="#api-docs-v304" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -140,7 +140,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                1.0.14
+                3.0.4
               
             </span>
           
@@ -294,11 +294,82 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../3.0.4/" title="3.0.4" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        3.0.4
+      </label>
+    
+    <a href="./" title="3.0.4" class="md-nav__link md-nav__link--active">
       3.0.4
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sink" title="Sink" class="md-nav__link">
+    Sink
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mqtt-sink" title="mqtt (Sink)" class="md-nav__link">
+    mqtt (Sink)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source" title="Source" class="md-nav__link">
+    Source
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mqtt-source" title="mqtt (Source)" class="md-nav__link">
+    mqtt (Source)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -498,82 +569,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        1.0.14
-      </label>
-    
-    <a href="./" title="1.0.14" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../1.0.14/" title="1.0.14" class="md-nav__link">
       1.0.14
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sink" title="Sink" class="md-nav__link">
-    Sink
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mqtt-sink" title="mqtt (Sink)" class="md-nav__link">
-    mqtt (Sink)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source" title="Source" class="md-nav__link">
-    Source
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mqtt-source" title="mqtt (Source)" class="md-nav__link">
-    mqtt (Source)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -730,15 +730,20 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/siddhi.io/siddhi-io-mqtt/blob/master/api/1.0.14.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/siddhi.io/siddhi-io-mqtt/blob/master/api/3.0.4.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="api-docs-v1014">API Docs - v1.0.14</h1>
+                <h1 id="api-docs-v304">API Docs - v3.0.4</h1>
+<div class="admonition info">
+<p class="admonition-title">Tested Siddhi Core version: <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/">5.1.21</a></em></p>
+<p>It could also support other Siddhi Core minor versions.</p>
+</div>
 <h2 id="sink">Sink</h2>
-<h3 id="mqtt-sink">mqtt <em><a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink">(Sink)</a></em></h3>
-<p style="word-wrap: break-word">The MQTT sink publishes the events to an MQTT broker </p>
-
-<p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
+<h3 id="mqtt-sink">mqtt <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">(Sink)</a></em></h3>
+<p><p></p>
+<p style="word-wrap: break-word;margin: 0;">The MQTT sink publishes the events to an MQTT broker </p>
+<p></p>
+<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
 <pre><code>@sink(type=&quot;mqtt&quot;, url=&quot;&lt;STRING&gt;&quot;, username=&quot;&lt;STRING&gt;&quot;, password=&quot;&lt;STRING&gt;&quot;, client.id=&quot;&lt;STRING&gt;&quot;, topic=&quot;&lt;STRING&gt;&quot;, quality.of.service=&quot;&lt;STRING&gt;&quot;, clean.session=&quot;&lt;BOOL&gt;&quot;, message.retain=&quot;&lt;STRING&gt;&quot;, keep.alive=&quot;&lt;INT&gt;&quot;, connection.timeout=&quot;&lt;INT&gt;&quot;, @map(...)))
 </code></pre>
 
@@ -754,7 +759,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">url</td>
-        <td style="vertical-align: top; word-wrap: break-word">The URL of the MQTT broker. It is used to connect to the MQTT broker It is required to specify a valid URL here.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The URL of the MQTT broker. It is used to connect to the MQTT broker It is required to specify a valid URL here.</p></td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -762,7 +767,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">username</td>
-        <td style="vertical-align: top; word-wrap: break-word">The username to be provided when the MQTT client is authenticated by the broker.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The username to be provided when the MQTT client is authenticated by the broker.</p></td>
         <td style="vertical-align: top">null</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -770,7 +775,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">password</td>
-        <td style="vertical-align: top; word-wrap: break-word">The password to be provided when the MQTT client is authenticated by the broker.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The password to be provided when the MQTT client is authenticated by the broker.</p></td>
         <td style="vertical-align: top">empty</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -778,7 +783,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">client.id</td>
-        <td style="vertical-align: top; word-wrap: break-word">A unique ID for the MQTT client. The server uses this to identify the client when it reconnects. If you do not specify a client ID, the system automatically generates it. </td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">A unique ID for the MQTT client. The server uses this to identify the client when it reconnects. If you do not specify a client ID, the system automatically generates it. </p></td>
         <td style="vertical-align: top">generated by the system</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -786,7 +791,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">topic</td>
-        <td style="vertical-align: top; word-wrap: break-word">The topic to which the events processed by WSO2 SP are published via MQTT. This is a mandatory parameter.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The topic to which the events processed by WSO2 SP are published via MQTT. This is a mandatory parameter.</p></td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -794,7 +799,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">quality.of.service</td>
-        <td style="vertical-align: top; word-wrap: break-word">The quality of service provided by the MQTT client. The possible values are as follows.<code>0</code>: The MQTT client sends each event only once. It does not receive an acknowledgement when an event is delivered, and the events are not stored. Events may get lost if the MQTT client is disconnected or if the server fails. This is the fastest method in which events are received via MQTT.<code>1</code>: The MQTT client sends each event at least once. If the MQTT client does not receive an acknowledgement to indicate that the event is delivered, it sends the event again.<code>2</code>: The MQTT client sends each event only once. The events are stored until the WSO2 SP receives them. This is the safest, but the slowest method of receiving events via MQTT.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The quality of service provided by the MQTT client. The possible values are as follows.<code>0</code>: The MQTT client sends each event only once. It does not receive an acknowledgement when an event is delivered, and the events are not stored. Events may get lost if the MQTT client is disconnected or if the server fails. This is the fastest method in which events are received via MQTT.<code>1</code>: The MQTT client sends each event at least once. If the MQTT client does not receive an acknowledgement to indicate that the event is delivered, it sends the event again.<code>2</code>: The MQTT client sends each event only once. The events are stored until the WSO2 SP receives them. This is the safest, but the slowest method of receiving events via MQTT.</p></td>
         <td style="vertical-align: top">1</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -802,7 +807,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">clean.session</td>
-        <td style="vertical-align: top; word-wrap: break-word">This is an optional paramater. If this parameter is set to <code>true</code>, the subscriptions made by the MQTT client during a session expire when the session ends,and they need to be recreated for the next session.<br>If this parameter is set to <code>false</code>, all the information relating to the MQTT client's connection to the broker (e.g., the specific topics to which the client has subscribed) are saved after a session. Thus, when a session ends and restarts, the connection is re-established with the same information.<br>The default value is <code>true</code>.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">This is an optional paramater. If this parameter is set to <code>true</code>, the subscriptions made by the MQTT client during a session expire when the session ends,and they need to be recreated for the next session.<br>If this parameter is set to <code>false</code>, all the information relating to the MQTT client's connection to the broker (e.g., the specific topics to which the client has subscribed) are saved after a session. Thus, when a session ends and restarts, the connection is re-established with the same information.<br>The default value is <code>true</code>.</p></td>
         <td style="vertical-align: top">true</td>
         <td style="vertical-align: top">BOOL</td>
         <td style="vertical-align: top">Yes</td>
@@ -810,7 +815,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">message.retain</td>
-        <td style="vertical-align: top; word-wrap: break-word">If this parameter is set to true, the last message sent from the topic to which WSO2 SP publishes events is retained until the next message is sent.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">If this parameter is set to true, the last message sent from the topic to which WSO2 SP publishes events is retained until the next message is sent.</p></td>
         <td style="vertical-align: top">false</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -818,7 +823,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">keep.alive</td>
-        <td style="vertical-align: top; word-wrap: break-word">The maximum number of seconds the connection between the MQTT client and the broker should be maintained without any events being transferred. Once this time interval elapses without any event transfers, the connection is dropped. The default value is 60.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The maximum number of seconds the connection between the MQTT client and the broker should be maintained without any events being transferred. Once this time interval elapses without any event transfers, the connection is dropped. The default value is 60.</p></td>
         <td style="vertical-align: top">60</td>
         <td style="vertical-align: top">INT</td>
         <td style="vertical-align: top">Yes</td>
@@ -826,7 +831,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">connection.timeout</td>
-        <td style="vertical-align: top; word-wrap: break-word">The maximum number of seconds that the MQTT client should spend attempting to connect to the MQTT broker. Once this time interval elapses, a timeout takes place.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The maximum number of seconds that the MQTT client should spend attempting to connect to the MQTT broker. Once this time interval elapses, a timeout takes place.</p></td>
         <td style="vertical-align: top">30</td>
         <td style="vertical-align: top">INT</td>
         <td style="vertical-align: top">Yes</td>
@@ -838,13 +843,18 @@
 <pre><code>@sink(type='mqtt', url= 'tcp://localhost:1883', topic='mqtt_topic', clean.session='true', message.retain='false', quality.of.service= '1', keep.alive= '60',connection.timeout='30'@map(type='xml'))Define stream BarStream (symbol string, price float, volume long);
 </code></pre>
 
-<p style="word-wrap: break-word">This query publishes events to a stream named <code>BarStream</code> via the MQTT transport. The events are published to a topic named mqtt_topic located at tcp://localhost:1883.</p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">This query publishes events to a stream named <code>BarStream</code> via the MQTT transport. The events are published to a topic named mqtt_topic located at tcp://localhost:1883.</p>
+
+<p></p>
 
 <h2 id="source">Source</h2>
-<h3 id="mqtt-source">mqtt <em><a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#source">(Source)</a></em></h3>
-<p style="word-wrap: break-word">The MQTT source receives the events from an MQTT broker </p>
-
-<p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
+<h3 id="mqtt-source">mqtt <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#source">(Source)</a></em></h3>
+<p><p></p>
+<p style="word-wrap: break-word;margin: 0;">The MQTT source receives the events from an MQTT broker </p>
+<p></p>
+<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
 <pre><code>@source(type=&quot;mqtt&quot;, url=&quot;&lt;STRING&gt;&quot;, username=&quot;&lt;STRING&gt;&quot;, password=&quot;&lt;STRING&gt;&quot;, client.id=&quot;&lt;STRING&gt;&quot;, topic=&quot;&lt;STRING&gt;&quot;, quality.of.service=&quot;&lt;STRING&gt;&quot;, clean.session=&quot;&lt;BOOL&gt;&quot;, keep.alive=&quot;&lt;INT&gt;&quot;, connection.timeout=&quot;&lt;INT&gt;&quot;, @map(...)))
 </code></pre>
 
@@ -860,7 +870,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">url</td>
-        <td style="vertical-align: top; word-wrap: break-word">The URL of the MQTT broker. It is used to connect to the MQTT broker. It is required to specify a valid URL here.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The URL of the MQTT broker. It is used to connect to the MQTT broker. It is required to specify a valid URL here.</p></td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -868,7 +878,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">username</td>
-        <td style="vertical-align: top; word-wrap: break-word">The username to be provided when the MQTT client is authenticated by the broker.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The username to be provided when the MQTT client is authenticated by the broker.</p></td>
         <td style="vertical-align: top">null</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -876,7 +886,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">password</td>
-        <td style="vertical-align: top; word-wrap: break-word">The password to be provided when the MQTT client is authenticated by the broker.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The password to be provided when the MQTT client is authenticated by the broker.</p></td>
         <td style="vertical-align: top">empty</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -884,7 +894,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">client.id</td>
-        <td style="vertical-align: top; word-wrap: break-word">A unique ID for the MQTT client. The server uses this to identify the client when it reconnects. If you do not specify a client ID, the system automatically generates it.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">A unique ID for the MQTT client. The server uses this to identify the client when it reconnects. If you do not specify a client ID, the system automatically generates it.</p></td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -892,7 +902,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">topic</td>
-        <td style="vertical-align: top; word-wrap: break-word">The topic from which WSO2 SP receives events via MQTT. Multiple topics can be specified as a list of comma separated values.This is a mandatory parameter.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The topic from which WSO2 SP receives events via MQTT. Multiple topics can be specified as a list of comma separated values.This is a mandatory parameter.</p></td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -900,7 +910,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">quality.of.service</td>
-        <td style="vertical-align: top; word-wrap: break-word">The quality of service provided by the MQTT client. The possible values are as follows.<code>0</code>: The MQTT client sends each event to WSO2 SP only once. It does not receive an acknowledgement when an event is delivered, and the events are not stored.Events may get lost if the MQTT client is disconnected or if the server fails.This is the fastest method in which events are received via MQTT.<code>1</code>: The MQTT client sends each event to WSO2 SP at least once. If the MQTT client does not receive an acknowledgement to indicate that the event is delivered, it sends the event again.<code>2</code>: The MQTT client sends each event to WSO2 SP only once. The events are stored until the WSO2 SP receives them. This is the safest, but the slowest method of receiving events via MQTT.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The quality of service provided by the MQTT client. The possible values are as follows.<code>0</code>: The MQTT client sends each event to WSO2 SP only once. It does not receive an acknowledgement when an event is delivered, and the events are not stored.Events may get lost if the MQTT client is disconnected or if the server fails.This is the fastest method in which events are received via MQTT.<code>1</code>: The MQTT client sends each event to WSO2 SP at least once. If the MQTT client does not receive an acknowledgement to indicate that the event is delivered, it sends the event again.<code>2</code>: The MQTT client sends each event to WSO2 SP only once. The events are stored until the WSO2 SP receives them. This is the safest, but the slowest method of receiving events via MQTT.</p></td>
         <td style="vertical-align: top">1</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -908,7 +918,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">clean.session</td>
-        <td style="vertical-align: top; word-wrap: break-word">This is an optional paramater. If this parameter is set to <code>true</code>, the subscriptions made by the MQTT client during a session expire when the session ends,and they need to be recreated for the next session.<br>If this parameter is set to <code>false</code>, all the information relating to the MQTT client's connection to the broker (e.g., the specific topics to which the client has subscribed) are saved after a session. Thus, when a session ends and restarts, the connection is re-established with the same information.<br>The default value is <code>true</code>.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">This is an optional paramater. If this parameter is set to <code>true</code>, the subscriptions made by the MQTT client during a session expire when the session ends,and they need to be recreated for the next session.<br>If this parameter is set to <code>false</code>, all the information relating to the MQTT client's connection to the broker (e.g., the specific topics to which the client has subscribed) are saved after a session. Thus, when a session ends and restarts, the connection is re-established with the same information.<br>The default value is <code>true</code>.</p></td>
         <td style="vertical-align: top">true</td>
         <td style="vertical-align: top">BOOL</td>
         <td style="vertical-align: top">Yes</td>
@@ -916,7 +926,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">keep.alive</td>
-        <td style="vertical-align: top; word-wrap: break-word">The maximum number of seconds the connection between the MQTT client and the broker should be maintained without any events being transferred. Once this time interval elapses without any event transfers, the connection is dropped. The default value is 60.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The maximum number of seconds the connection between the MQTT client and the broker should be maintained without any events being transferred. Once this time interval elapses without any event transfers, the connection is dropped. The default value is 60.</p></td>
         <td style="vertical-align: top">60</td>
         <td style="vertical-align: top">INT</td>
         <td style="vertical-align: top">Yes</td>
@@ -924,7 +934,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">connection.timeout</td>
-        <td style="vertical-align: top; word-wrap: break-word">The maximum number of seconds that the MQTT client should spend attempting to connect to the MQTT broker. Once this time interval elapses, a timeout takes place.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">The maximum number of seconds that the MQTT client should spend attempting to connect to the MQTT broker. Once this time interval elapses, a timeout takes place.</p></td>
         <td style="vertical-align: top">30</td>
         <td style="vertical-align: top">INT</td>
         <td style="vertical-align: top">Yes</td>
@@ -936,7 +946,11 @@
 <pre><code>@source(type='mqtt', url= 'tcp://localhost:1883', topic='mqtt_topic', clean.session='true',quality.of.service= '1', keep.alive= '60',connection.timeout='30'@map(type='xml'))Define stream BarStream (symbol string, price float, volume long);
 </code></pre>
 
-<p style="word-wrap: break-word">This query receives events from the <code>mqtt_topic</code> topic via MQTT,and processes them to the BarStream stream.</p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">This query receives events from the <code>mqtt_topic</code> topic via MQTT,and processes them to the BarStream stream.</p>
+
+<p></p>
                 
                   
                 
@@ -957,7 +971,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../1.0.15/" title="1.0.15" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../latest/" title="latest" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -966,19 +980,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                1.0.15
+                latest
               </span>
             </div>
           </a>
         
         
-          <a href="../1.0.13/" title="1.0.13" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../3.0.3/" title="3.0.3" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                1.0.13
+                3.0.3
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
