@@ -42,7 +42,10 @@ public class MqttConstants {
     public static final String DEFAULT_USERNAME = null;
     public static final String CONNECTION_TIMEOUT_INTERVAL = "connection.timeout";
     public static final String DEFAULT_CONNECTION_TIMEOUT_INTERVAL = "30";
-
-
-
+    public static final String MAX_INFLIGHT = "max.inflight";
+    public static final String DEFAULT_MAX_INFLIGHT = "10";
+    public static final String AUTOMATIC_RECONNECT = "automatic.reconnect";
+    public static final String DEFAULT_AUTOMATIC_RECONNECT = "false";
+    public static final String MAX_RECONNECT_DELAY = "max.reconnect.delay";
+    public static final String DEFAULT_MAX_RECONNECT_DELAY = "128000";
 }
